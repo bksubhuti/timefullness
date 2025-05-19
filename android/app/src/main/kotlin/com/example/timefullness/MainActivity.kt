@@ -1,4 +1,4 @@
-package com.example.timefullness
+package com.example.timefulness
 
 import io.flutter.embedding.android.FlutterActivity
 

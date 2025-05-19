@@ -350,7 +350,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Timefullness')),
+      appBar: AppBar(title: const Text('Timefulness')),
       body: ListView.builder(
         itemCount: schedule.length,
         itemBuilder: (context, index) {

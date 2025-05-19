@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'screens/schedule_screen.dart';
 
 void main() {
-  runApp(const TimefullnessApp());
+  runApp(const TimefulnessApp());
 }
 
-class TimefullnessApp extends StatelessWidget {
-  const TimefullnessApp({super.key});
+class TimefulnessApp extends StatelessWidget {
+  const TimefulnessApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Timefullness',
+      title: 'Timefulness',
       home: const ScheduleScreen(),
       debugShowCheckedModeBanner: false,
     );
