@@ -284,6 +284,10 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
       final durationInMinutes = endTime.difference(parsedStartTime).inMinutes;
       durationMinutes = durationInMinutes > 0 ? durationInMinutes : 50;
 
+      selectedStartTime = TimeOfDay.fromDateTime(
+        DateFormat('h:mm a', 'en_US').parseStrict(_cleanTime(item.startTime)),
+      );
+
       _openAddDialog(isEditing: true, editIndex: index);
     } catch (e) {
       debugPrint('❌ FormatException in _editItem(): $e');
@@ -312,18 +316,25 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       // Start time picker
-                      ElevatedButton(
-                        onPressed: () async {
-                          await _pickStartTime();
-                          // Need to update dialog state after picking time
-                          setDialogState(() {});
-                        },
-                        child: Text(
-                          selectedStartTime == null
-                              ? 'Pick Start Time'
-                              : 'Start: ${_formatTime(selectedStartTime!)}',
-                        ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            selectedStartTime != null
+                                ? 'Start: ${_formatTime(selectedStartTime!)}'
+                                : 'Start: (not selected)',
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          ElevatedButton(
+                            onPressed: () async {
+                              await _pickStartTime();
+                              setDialogState(() {});
+                            },
+                            child: const Text('Change'),
+                          ),
+                        ],
                       ),
+
                       const SizedBox(height: 20),
 
                       // Duration selector with dial
