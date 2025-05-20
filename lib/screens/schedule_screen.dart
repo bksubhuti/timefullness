@@ -1,14 +1,21 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+import 'dart:io' show Platform;
 import 'dart:math' as math;
 import 'dart:ui' as ui;
 import 'package:intl/intl.dart';
 import 'package:csv/csv.dart';
 import 'package:flutter/services.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:timefulness/services/hive_schedule_repository.dart';
+import 'package:timefulness/widgets/solid_visual_timer.dart';
 import '../models/schedule_item.dart';
 import '../widgets/schedule_tile.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 
 class ScheduleScreen extends StatefulWidget {
   const ScheduleScreen({super.key});
@@ -24,10 +31,18 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
   final _activityController = TextEditingController();
   final AudioPlayer _audioPlayer = AudioPlayer();
   bool _isDefaultScheduleLoaded = false;
+  late final HiveScheduleRepository scheduleRepo;
+  static const String defaultScheduleId = 'default';
+  int _activeDuration = 0;
+  int _remainingSeconds = 0;
+  Timer? _countdownTimer;
+  bool _timerVisible = false;
 
   @override
   void initState() {
     super.initState();
+    final box = Hive.box('schedules');
+    scheduleRepo = HiveScheduleRepository(box);
     _loadSchedule();
   }
 
@@ -63,28 +78,24 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
   }
 
   Future<void> _saveSchedule() async {
-    final prefs = await SharedPreferences.getInstance();
-    final data = schedule.map((item) => item.toJson()).toList();
-    await prefs.setString('schedule', jsonEncode(data));
+    await scheduleRepo.saveSchedule(defaultScheduleId, schedule);
   }
 
   Future<void> _loadSchedule() async {
-    final prefs = await SharedPreferences.getInstance();
-    final jsonStr = prefs.getString('schedule');
+    final items = await scheduleRepo.loadSchedule(defaultScheduleId);
 
-    if (jsonStr != null) {
-      final List<dynamic> data = jsonDecode(jsonStr);
-      final loadedSchedule = data.map((e) => ScheduleItem.fromJson(e)).toList();
-      _sortScheduleByTime(); // optional if sorting doesn't rely on state yet
-
-      setState(() {
-        schedule = loadedSchedule;
-      });
-
-      await _checkForMidnightReset();
-    } else {
+    if (items.isEmpty) {
+      debugPrint("📂 No schedule found in Hive, loading default from CSV...");
       await _loadDefaultSchedule();
+      return;
     }
+
+    setState(() {
+      schedule = items;
+    });
+
+    _sortScheduleByTime();
+    await _checkForMidnightReset();
   }
 
   Future<void> _loadDefaultSchedule() async {
@@ -123,7 +134,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
         });
 
         // Save the default schedule
-        _saveSchedule();
+        await _saveSchedule();
       }
     } catch (e) {
       debugPrint('Error loading default schedule: $e');
@@ -139,9 +150,11 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     setState(() {
       schedule.add(
         ScheduleItem(
+          id: UniqueKey().toString(),
           startTime: _formatTime(selectedStartTime!),
           endTime: _formatTime(endTime),
           activity: _activityController.text,
+          checkedAt: DateTime.fromMillisecondsSinceEpoch(0),
         ),
       );
       _sortScheduleByTime();
@@ -160,10 +173,12 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
 
     setState(() {
       schedule[index] = ScheduleItem(
+        id: schedule[index].id,
         startTime: _formatTime(selectedStartTime!),
         endTime: _formatTime(endTime),
         activity: _activityController.text,
         done: schedule[index].done,
+        checkedAt: schedule[index].checkedAt,
       );
       _sortScheduleByTime();
     });
@@ -173,10 +188,13 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     Navigator.of(context).pop();
   }
 
-  Future<void> _playBellSound() async {
+  Future<void> _playBellSound({bool timer = false}) async {
+    String soundFile =
+        timer ? 'bell-meditation-75335.mp3' : 'bell-meditation-trim.mp3';
+
     try {
       final player = AudioPlayer(); // Create a fresh instance each time
-      await player.play(AssetSource('bell-meditation-trim.mp3'));
+      await player.play(AssetSource(soundFile));
       // Dispose after sound finishes (non-blocking)
       player.onPlayerComplete.listen((event) {
         player.dispose();
@@ -191,6 +209,8 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
 
     setState(() {
       schedule[index].done = newValue;
+      schedule[index].checkedAt =
+          newValue ? DateTime.now() : DateTime.fromMillisecondsSinceEpoch(0);
     });
 
     // Play bell sound when item is checked (marked as done)
@@ -220,6 +240,46 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
         return 0;
       }
     });
+  }
+
+  void _startVisualTimer(int index) {
+    if (_countdownTimer != null && _countdownTimer!.isActive) return;
+    final item = schedule[index];
+    final format = DateFormat('h:mm a', 'en_US');
+    try {
+      final start = format.parse(_cleanTime(item.startTime));
+      final end = format.parse(_cleanTime(item.endTime));
+      final duration = end.difference(start).inSeconds;
+      WakelockPlus.enable();
+
+      setState(() {
+        _activeDuration = duration;
+        _remainingSeconds = duration;
+        _timerVisible = true;
+      });
+
+      _countdownTimer?.cancel();
+      _countdownTimer = Timer.periodic(const Duration(seconds: 1), (
+        timer,
+      ) async {
+        if (_remainingSeconds > 0) {
+          setState(() => _remainingSeconds--);
+        } else {
+          timer.cancel();
+          await _playBellSound(timer: true);
+          WakelockPlus.disable();
+          setState(() => _timerVisible = false);
+        }
+      });
+    } catch (e) {
+      debugPrint('❌ Could not start timer: $e');
+    }
+  }
+
+  void _stopVisualTimer() {
+    _countdownTimer?.cancel();
+    WakelockPlus.disable();
+    setState(() => _timerVisible = false);
   }
 
   Future<void> _checkForMidnightReset() async {
@@ -397,17 +457,34 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Timefulness')),
-      body: ListView.builder(
-        itemCount: schedule.length,
-        itemBuilder: (context, index) {
-          final item = schedule[index];
-          return ScheduleTile(
-            item: item,
-            onChanged: (value) => _updateItem(index, value),
-            onDelete: () => _deleteItem(index),
-            onEdit: () => _editItem(index),
-          );
-        },
+      body: Column(
+        children: [
+          if (_timerVisible)
+            ElevatedButton(
+              child: Text("Stop Timer"),
+              onPressed: _stopVisualTimer,
+            ),
+          if (_timerVisible)
+            SolidVisualTimer(
+              remaining: _remainingSeconds,
+              total: _activeDuration,
+            ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: schedule.length,
+              itemBuilder: (context, index) {
+                final item = schedule[index];
+                return ScheduleTile(
+                  item: item,
+                  onChanged: (value) => _updateItem(index, value),
+                  onDelete: () => _deleteItem(index),
+                  onEdit: () => _editItem(index),
+                  onTap: () => _startVisualTimer(index),
+                );
+              },
+            ),
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _openAddDialog(),

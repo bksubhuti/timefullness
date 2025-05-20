@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.timefulness"
+    namespace = "org.americanmonk.timefulness"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = "29.0.13113456"
     
