@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:timefulness/models/prefs.dart';
 
 class SolidVisualTimer extends StatelessWidget {
   final int remaining;
@@ -15,20 +16,28 @@ class SolidVisualTimer extends StatelessWidget {
   Widget build(BuildContext context) {
     final double progress = total == 0 ? 0 : remaining / total;
 
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: AspectRatio(
-        aspectRatio: 1,
-        child: CustomPaint(
-          painter: SolidCirclePainter(progress),
-          child: Center(
-            child: Text(
-              "$remaining s",
-              style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final double maxSize = min(constraints.maxWidth, 300); // Cap size
+        return Center(
+          child: SizedBox(
+            width: maxSize,
+            height: maxSize,
+            child: CustomPaint(
+              painter: SolidCirclePainter(progress),
+              child: Center(
+                child: Text(
+                  "$remaining s",
+                  style: const TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
@@ -47,7 +56,7 @@ class SolidCirclePainter extends CustomPainter {
 
     final progressPaint =
         Paint()
-          ..color = Colors.blue
+          ..color = Color(Prefs.timerColor)
           ..style = PaintingStyle.fill;
 
     final center = Offset(size.width / 2, size.height / 2);

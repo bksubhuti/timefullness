@@ -3,15 +3,14 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert';
-import 'dart:io' show Platform;
-import 'dart:math' as math;
-import 'dart:ui' as ui;
 import 'package:intl/intl.dart';
 import 'package:csv/csv.dart';
 import 'package:flutter/services.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:timefulness/models/prefs.dart';
+import 'package:timefulness/screens/settings_screen.dart';
 import 'package:timefulness/services/hive_schedule_repository.dart';
+import 'package:timefulness/widgets/duration_dial.dart';
 import 'package:timefulness/widgets/solid_visual_timer.dart';
 import '../models/schedule_item.dart';
 import '../widgets/schedule_tile.dart';
@@ -78,17 +77,20 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
   }
 
   Future<void> _saveSchedule() async {
-    await scheduleRepo.saveSchedule(defaultScheduleId, schedule);
+    final activeId =
+        await scheduleRepo.getActiveScheduleId() ?? defaultScheduleId;
+    await scheduleRepo.saveSchedule(activeId, schedule);
   }
 
   Future<void> _loadSchedule() async {
-    final items = await scheduleRepo.loadSchedule(defaultScheduleId);
-
-    if (items.isEmpty) {
-      debugPrint("📂 No schedule found in Hive, loading default from CSV...");
-      await _loadDefaultSchedule();
-      return;
+    final activeId = await scheduleRepo.getActiveScheduleId();
+    if (activeId == null) {
+      debugPrint("⚠️ No active schedule ID found. Defaulting to 'default'");
+      await scheduleRepo.setActiveScheduleId(defaultScheduleId);
+      return _loadSchedule(); // try again
     }
+
+    final items = await scheduleRepo.loadSchedule(activeId);
 
     setState(() {
       schedule = items;
@@ -398,7 +400,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                       const SizedBox(height: 20),
 
                       // Duration selector with dial
-                      Text('Duration: ${durationMinutes} minutes'),
+                      Text('Duration: $durationMinutes minutes'),
                       const SizedBox(height: 10),
                       SizedBox(
                         height: 200,
@@ -456,13 +458,76 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Timefulness')),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            const DrawerHeader(
+              decoration: BoxDecoration(color: Colors.blue),
+              child: Text(
+                'Menu',
+                style: TextStyle(color: Colors.white, fontSize: 24),
+              ),
+            ),
+            ListTile(
+              leading: Icon(Icons.settings),
+              title: Text('Settings'),
+              onTap: () {
+                Navigator.pop(context); // close drawer
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const SettingsScreen()),
+                ).then(
+                  (_) => setState(() {
+                    _loadSchedule();
+                  }),
+                );
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.info),
+              title: Text('About'),
+              onTap: () {
+                Navigator.pop(context);
+                _showAboutDialog(context);
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.help_outline),
+              title: Text('Help'),
+              onTap: () {
+                Navigator.pop(context);
+                _showHelpDialog(context);
+              },
+            ),
+          ],
+        ),
+      ),
+      appBar: AppBar(
+        title: const Text('Daily Timefulness'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              Navigator.of(context)
+                  .push(
+                    MaterialPageRoute(builder: (_) => const SettingsScreen()),
+                  )
+                  .then(
+                    (_) => setState(() {
+                      _loadSchedule();
+                    }),
+                  );
+            },
+          ),
+        ],
+      ),
       body: Column(
         children: [
           if (_timerVisible)
             ElevatedButton(
-              child: Text("Stop Timer"),
               onPressed: _stopVisualTimer,
+              child: Text("Stop Timer"),
             ),
           if (_timerVisible)
             SolidVisualTimer(
@@ -492,147 +557,32 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
       ),
     );
   }
-}
 
-// Custom duration dial widget
-class DurationDial extends StatefulWidget {
-  final int initialDuration;
-  final ValueChanged<int> onChanged;
-
-  const DurationDial({
-    super.key,
-    required this.initialDuration,
-    required this.onChanged,
-  });
-
-  @override
-  State<DurationDial> createState() => _DurationDialState();
-}
-
-class _DurationDialState extends State<DurationDial> {
-  late double _angle;
-  late int _duration;
-
-  @override
-  void initState() {
-    super.initState();
-    _duration = widget.initialDuration;
-    // Convert duration to angle (0-360 degrees)
-    _angle = (_duration / 120) * 2 * math.pi; // Max 2 hours (120 minutes)
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onPanUpdate: (details) {
-        final RenderBox box = context.findRenderObject() as RenderBox;
-        final center = Offset(box.size.width / 2, box.size.height / 2);
-        final position = details.localPosition;
-        final angle =
-            (math.atan2(position.dy - center.dy, position.dx - center.dx) +
-                math.pi * 2.5) %
-            (math.pi * 2);
-
-        setState(() {
-          _angle = angle;
-          // Convert angle to duration (5-120 minutes)
-          _duration = math.max(
-            5,
-            math.min(120, (angle / (2 * math.pi) * 120).round()),
-          );
-          widget.onChanged(_duration);
-        });
-      },
-      child: CustomPaint(
-        size: const Size(200, 200),
-        painter: DialPainter(angle: _angle, duration: _duration),
-      ),
-    );
-  }
-}
-
-class DialPainter extends CustomPainter {
-  final double angle;
-  final int duration;
-
-  DialPainter({required this.angle, required this.duration});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final center = Offset(size.width / 2, size.height / 2);
-    final radius = math.min(size.width, size.height) / 2;
-
-    // Draw dial background
-    final backgroundPaint =
-        Paint()
-          ..color = Colors.grey.shade200
-          ..style = PaintingStyle.fill;
-    canvas.drawCircle(center, radius, backgroundPaint);
-
-    // Draw dial border
-    final borderPaint =
-        Paint()
-          ..color = Colors.grey.shade400
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 2;
-    canvas.drawCircle(center, radius, borderPaint);
-
-    // Draw selected segment
-    final selectedPaint =
-        Paint()
-          ..color = Colors.blue.withOpacity(0.3)
-          ..style = PaintingStyle.fill;
-    canvas.drawArc(
-      Rect.fromCircle(center: center, radius: radius),
-      -math.pi / 2, // Start from top
-      angle,
-      true,
-      selectedPaint,
-    );
-
-    // Draw indicator line
-    final linePaint =
-        Paint()
-          ..color = Colors.blue
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 3;
-    final lineEnd = Offset(
-      center.dx + radius * math.cos(angle - math.pi / 2),
-      center.dy + radius * math.sin(angle - math.pi / 2),
-    );
-    canvas.drawLine(center, lineEnd, linePaint);
-
-    // Draw indicator knob
-    final knobPaint =
-        Paint()
-          ..color = Colors.blue
-          ..style = PaintingStyle.fill;
-    canvas.drawCircle(lineEnd, 8, knobPaint);
-
-    // Draw duration text using a simpler approach
-    final textStyle = TextStyle(
-      color: Colors.black,
-      fontSize: 16,
-      fontWeight: FontWeight.bold,
-    );
-    final paragraphStyle = ui.ParagraphStyle(
-      textAlign: TextAlign.center,
-      fontSize: 16,
-    );
-    final paragraphBuilder =
-        ui.ParagraphBuilder(paragraphStyle)
-          ..pushStyle(textStyle.getTextStyle())
-          ..addText('$duration min');
-    final paragraph = paragraphBuilder.build();
-    paragraph.layout(ui.ParagraphConstraints(width: size.width));
-    canvas.drawParagraph(
-      paragraph,
-      Offset(center.dx - paragraph.width / 2, center.dy - paragraph.height / 2),
+  void _showAboutDialog(BuildContext context) {
+    showAboutDialog(
+      context: context,
+      applicationName: 'Timefulness',
+      applicationVersion: '1.0.0',
+      applicationLegalese: '© 2025 Bhante Subhuti',
     );
   }
 
-  @override
-  bool shouldRepaint(DialPainter oldDelegate) {
-    return oldDelegate.angle != angle || oldDelegate.duration != duration;
+  void _showHelpDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Help'),
+            content: const Text(
+              '• Tap an item to start the timer.\n• Long-press to edit.\n• Use the menu for settings.',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Close'),
+              ),
+            ],
+          ),
+    );
   }
 }
