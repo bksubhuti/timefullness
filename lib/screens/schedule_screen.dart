@@ -1,6 +1,7 @@
+// schedule_screet.dart
 import 'dart:async';
-
 import 'package:flutter/material.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
@@ -77,26 +78,24 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
   }
 
   Future<void> _saveSchedule() async {
-    final activeId =
-        await scheduleRepo.getActiveScheduleId() ?? defaultScheduleId;
+    final activeId = Prefs.currentScheduleId;
     await scheduleRepo.saveSchedule(activeId, schedule);
   }
 
   Future<void> _loadSchedule() async {
-    final activeId = await scheduleRepo.getActiveScheduleId();
-    if (activeId == null) {
-      debugPrint("⚠️ No active schedule ID found. Defaulting to 'default'");
-      await scheduleRepo.setActiveScheduleId(defaultScheduleId);
-      return _loadSchedule(); // try again
+    final items = await scheduleRepo.loadSchedule(Prefs.currentScheduleId);
+    if (items.isEmpty) {
+      debugPrint(
+        "📭 No items found for schedule '${Prefs.currentScheduleId}', loading default...",
+      );
+      await _loadDefaultSchedule();
+      return;
     }
-
-    final items = await scheduleRepo.loadSchedule(activeId);
 
     setState(() {
       schedule = items;
     });
 
-    _sortScheduleByTime();
     await _checkForMidnightReset();
   }
 
@@ -244,7 +243,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     });
   }
 
-  void _startVisualTimer(int index) {
+  void _startVisualTimer(int index) async {
     if (_countdownTimer != null && _countdownTimer!.isActive) return;
     final item = schedule[index];
     final format = DateFormat('h:mm a', 'en_US');
@@ -253,7 +252,10 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
       final end = format.parse(_cleanTime(item.endTime));
       final duration = end.difference(start).inSeconds;
       WakelockPlus.enable();
-
+      final isRunning = await FlutterBackgroundService().isRunning();
+      if (!isRunning) {
+        await FlutterBackgroundService().startService();
+      }
       setState(() {
         _activeDuration = duration;
         _remainingSeconds = duration;
@@ -270,6 +272,8 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
           timer.cancel();
           await _playBellSound(timer: true);
           WakelockPlus.disable();
+          FlutterBackgroundService().invoke('stopService');
+
           setState(() => _timerVisible = false);
         }
       });
@@ -281,6 +285,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
   void _stopVisualTimer() {
     _countdownTimer?.cancel();
     WakelockPlus.disable();
+    FlutterBackgroundService().invoke('stopService');
     setState(() => _timerVisible = false);
   }
 

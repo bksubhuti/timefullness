@@ -15,6 +15,12 @@ class SolidVisualTimer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double progress = total == 0 ? 0 : remaining / total;
+    final minutes = remaining ~/ 60;
+    final seconds = remaining % 60;
+    final timeStr =
+        minutes > 0
+            ? "$minutes:${seconds.toString().padLeft(2, '0')}"
+            : "$seconds s";
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -27,7 +33,7 @@ class SolidVisualTimer extends StatelessWidget {
               painter: SolidCirclePainter(progress),
               child: Center(
                 child: Text(
-                  "$remaining s",
+                  timeStr,
                   style: const TextStyle(
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
