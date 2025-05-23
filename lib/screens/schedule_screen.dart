@@ -1,7 +1,6 @@
 // schedule_screet.dart
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
@@ -11,6 +10,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:timefulness/models/prefs.dart';
 import 'package:timefulness/screens/settings_screen.dart';
 import 'package:timefulness/services/hive_schedule_repository.dart';
+import 'package:timefulness/services/notification_service.dart';
 import 'package:timefulness/widgets/duration_dial.dart';
 import 'package:timefulness/widgets/solid_visual_timer.dart';
 import '../models/schedule_item.dart';
@@ -37,6 +37,8 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
   int _remainingSeconds = 0;
   Timer? _countdownTimer;
   bool _timerVisible = false;
+  DateTime? _destinationTime;
+  Timer? _updateTimer;
 
   @override
   void initState() {
@@ -44,6 +46,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     final box = Hive.box('schedules');
     scheduleRepo = HiveScheduleRepository(box);
     _loadSchedule();
+    _resumeVisualTimerIfNeeded();
   }
 
   @override
@@ -243,49 +246,63 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     });
   }
 
-  void _startVisualTimer(int index) async {
-    if (_countdownTimer != null && _countdownTimer!.isActive) return;
+  Future<void> _startVisualTimer(int index) async {
     final item = schedule[index];
     final format = DateFormat('h:mm a', 'en_US');
+
     try {
       final start = format.parse(_cleanTime(item.startTime));
       final end = format.parse(_cleanTime(item.endTime));
-      final duration = end.difference(start).inSeconds;
+      final duration = end.difference(start);
+
+      final now = DateTime.now();
+      final destination = now.add(duration);
+
+      Prefs.destinationTime = _destinationTime = destination;
       WakelockPlus.enable();
-      final isRunning = await FlutterBackgroundService().isRunning();
-      if (!isRunning) {
-        await FlutterBackgroundService().startService();
-      }
-      setState(() {
-        _activeDuration = duration;
-        _remainingSeconds = duration;
-        _timerVisible = true;
-      });
 
-      _countdownTimer?.cancel();
-      _countdownTimer = Timer.periodic(const Duration(seconds: 1), (
-        timer,
-      ) async {
-        if (_remainingSeconds > 0) {
-          setState(() => _remainingSeconds--);
-        } else {
-          timer.cancel();
-          await _playBellSound(timer: true);
+      await notificationService.scheduleNotification(
+        id: 1,
+        title: 'Timefulness',
+        body: '⏰ Your session is complete.',
+        scheduledDateTime: _destinationTime!,
+      );
+      _updateTimer?.cancel();
+      _updateTimer = Timer.periodic(const Duration(seconds: 1), (_) {
+        final now = DateTime.now();
+        final remaining = _destinationTime!.difference(now).inSeconds;
+
+        if (remaining <= 0) {
+          _stopVisualTimer();
+          _playBellSound();
           WakelockPlus.disable();
-          FlutterBackgroundService().invoke('stopService');
-
-          setState(() => _timerVisible = false);
+        } else {
+          setState(() {
+            _remainingSeconds = remaining;
+            _activeDuration = duration.inSeconds;
+            Prefs.activeTimerDuration = _activeDuration;
+            _timerVisible = true;
+          });
         }
       });
+
+      setState(() {
+        _remainingSeconds = duration.inSeconds;
+        _activeDuration = duration.inSeconds;
+        _timerVisible = true;
+      });
     } catch (e) {
-      debugPrint('❌ Could not start timer: $e');
+      debugPrint('❌ Could not start visual timer: $e');
+      if (await WakelockPlus.enabled) WakelockPlus.disable();
     }
   }
 
-  void _stopVisualTimer() {
-    _countdownTimer?.cancel();
+  void _stopVisualTimer() async {
+    _updateTimer?.cancel();
+    Prefs.destinationTime = _destinationTime = null;
     WakelockPlus.disable();
-    FlutterBackgroundService().invoke('stopService');
+    await notificationService.cancelNotification(1);
+
     setState(() => _timerVisible = false);
   }
 
@@ -358,6 +375,41 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
       _openAddDialog(isEditing: true, editIndex: index);
     } catch (e) {
       debugPrint('❌ FormatException in _editItem(): $e');
+    }
+  }
+
+  void _resumeVisualTimerIfNeeded() {
+    final dest = Prefs.destinationTime;
+    if (dest == null) return;
+
+    final remaining = dest.difference(DateTime.now()).inSeconds;
+    if (remaining > 0) {
+      _destinationTime = dest;
+
+      _activeDuration = Prefs.activeTimerDuration;
+
+      _remainingSeconds = remaining;
+
+      _updateTimer?.cancel();
+      _updateTimer = Timer.periodic(const Duration(seconds: 1), (_) {
+        final remaining =
+            _destinationTime!.difference(DateTime.now()).inSeconds;
+        if (remaining <= 0) {
+          _stopVisualTimer();
+          _playBellSound(timer: true);
+        } else {
+          setState(() {
+            _remainingSeconds = remaining;
+            _timerVisible = true;
+          });
+        }
+      });
+
+      setState(() {
+        _timerVisible = true;
+      });
+    } else {
+      Prefs.destinationTime = null;
     }
   }
 

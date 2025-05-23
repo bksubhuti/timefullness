@@ -1,6 +1,5 @@
 // settings_screen.dart
 import 'package:flutter/material.dart';
-import 'package:flutter_background_service/flutter_background_service.dart';
 import '../models/prefs.dart';
 import '../services/hive_schedule_repository.dart';
 import 'package:hive/hive.dart';
@@ -136,7 +135,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ],
           ),
-          SwitchListTile(
+          /*          SwitchListTile(
             title: const Text(
               "Enable Background Service",
               style: TextStyle(fontSize: 18),
@@ -166,7 +165,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 service.invoke('stopService');
               }
             },
-          ),
+          ),*/
         ],
       ),
     );
