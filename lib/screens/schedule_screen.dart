@@ -1,6 +1,8 @@
 // schedule_screet.dart
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
@@ -8,6 +10,7 @@ import 'package:csv/csv.dart';
 import 'package:flutter/services.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:timefulness/models/prefs.dart';
+import 'package:timefulness/plugin.dart';
 import 'package:timefulness/screens/settings_screen.dart';
 import 'package:timefulness/services/hive_schedule_repository.dart';
 import 'package:timefulness/services/notification_service.dart';
@@ -16,6 +19,9 @@ import 'package:timefulness/widgets/solid_visual_timer.dart';
 import '../models/schedule_item.dart';
 import '../widgets/schedule_tile.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
+import 'package:timefulness/services/example_includes.dart';
+import 'package:timezone/data/latest_all.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 
 class ScheduleScreen extends StatefulWidget {
   const ScheduleScreen({super.key});
@@ -39,19 +45,141 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
   bool _timerVisible = false;
   DateTime? _destinationTime;
   Timer? _updateTimer;
+
+  // eample stuff
+  bool _notificationsEnabled = false;
+
   @override
   void initState() {
     super.initState();
     final box = Hive.box('schedules');
     scheduleRepo = HiveScheduleRepository(box);
     _loadSchedule();
+
+    _isAndroidPermissionGranted();
+    _requestPermissions();
+    //    _configureSelectNotificationSubject();
+
     _resumeVisualTimerIfNeeded();
   }
 
   @override
   void dispose() {
     _audioPlayer.dispose();
+    selectNotificationStream.close();
+
     super.dispose();
+  }
+
+  Future<void> _isAndroidPermissionGranted() async {
+    if (Platform.isAndroid) {
+      final bool granted =
+          await flutterLocalNotificationsPlugin
+              .resolvePlatformSpecificImplementation<
+                AndroidFlutterLocalNotificationsPlugin
+              >()
+              ?.areNotificationsEnabled() ??
+          false;
+
+      setState(() {
+        _notificationsEnabled = granted;
+      });
+    }
+  }
+
+  Future<void> _requestPermissions() async {
+    if (Platform.isIOS || Platform.isMacOS) {
+      await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+            IOSFlutterLocalNotificationsPlugin
+          >()
+          ?.requestPermissions(alert: true, badge: true, sound: true);
+      await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+            MacOSFlutterLocalNotificationsPlugin
+          >()
+          ?.requestPermissions(alert: true, badge: true, sound: true);
+    } else if (Platform.isAndroid) {
+      final AndroidFlutterLocalNotificationsPlugin? androidImplementation =
+          flutterLocalNotificationsPlugin
+              .resolvePlatformSpecificImplementation<
+                AndroidFlutterLocalNotificationsPlugin
+              >();
+
+      final bool? grantedNotificationPermission =
+          await androidImplementation?.requestNotificationsPermission();
+      setState(() {
+        _notificationsEnabled = grantedNotificationPermission ?? false;
+      });
+    }
+  }
+
+  Future<void> _requestPermissionsWithCriticalAlert() async {
+    if (Platform.isIOS || Platform.isMacOS) {
+      await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+            IOSFlutterLocalNotificationsPlugin
+          >()
+          ?.requestPermissions(
+            alert: true,
+            badge: true,
+            sound: true,
+            critical: true,
+          );
+      await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+            MacOSFlutterLocalNotificationsPlugin
+          >()
+          ?.requestPermissions(
+            alert: true,
+            badge: true,
+            sound: true,
+            critical: true,
+          );
+    }
+  }
+
+  Future<void> _requestNotificationPolicyAccess() async {
+    final AndroidFlutterLocalNotificationsPlugin? androidImplementation =
+        flutterLocalNotificationsPlugin
+            .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin
+            >();
+    await androidImplementation?.requestNotificationPolicyAccess();
+  }
+
+  Future<void> _zonedScheduleNotification(Duration duration) async {
+    await flutterLocalNotificationsPlugin.zonedSchedule(
+      0,
+      'scheduled title',
+      'scheduled body',
+      tz.TZDateTime.now(tz.local).add(duration),
+      const NotificationDetails(
+        android: AndroidNotificationDetails(
+          'Timefulness channel id',
+          'Timefulness channel name',
+          channelDescription: 'Timefulness channel description',
+        ),
+      ),
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+    );
+  }
+
+  Future<void> _zonedScheduleAlarmClockNotification() async {
+    await flutterLocalNotificationsPlugin.zonedSchedule(
+      123,
+      'scheduled alarm clock title',
+      'scheduled alarm clock body',
+      tz.TZDateTime.now(tz.local).add(const Duration(seconds: 5)),
+      const NotificationDetails(
+        android: AndroidNotificationDetails(
+          'alarm_clock_channel',
+          'Alarm Clock Channel',
+          channelDescription: 'Alarm Clock Notification',
+        ),
+      ),
+      androidScheduleMode: AndroidScheduleMode.alarmClock,
+    );
   }
 
   String _formatTime(TimeOfDay time) {
@@ -260,14 +388,17 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
       Prefs.destinationTime = _destinationTime = destination;
       WakelockPlus.enable();
 
-      // for testing
-      //      _destinationTime = DateTime.now().add(const Duration(seconds: 10));
-      await notificationService.scheduleNotification(
+      //for testing
+      //_destinationTime = DateTime.now().add(const Duration(seconds: 10));
+      /*      await notificationService.scheduleNotification(
         id: 1,
         title: 'Timefulness',
         body: '⏰ Your session is complete.',
         scheduledDateTime: _destinationTime!,
       );
+      */
+      // call tihs instead
+      _zonedScheduleNotification(duration);
       _updateTimer?.cancel();
       _updateTimer = Timer.periodic(const Duration(seconds: 1), (_) {
         final now = DateTime.now();
@@ -302,9 +433,13 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     _updateTimer?.cancel();
     Prefs.destinationTime = _destinationTime = null;
     WakelockPlus.disable();
-    await notificationService.cancelNotification(1);
-
+    //    await notificationService.cancelNotification(1);
+    //await _cancelNotification();
     setState(() => _timerVisible = false);
+  }
+
+  Future<void> _cancelNotification() async {
+    await flutterLocalNotificationsPlugin.cancel(--id);
   }
 
   Future<void> _checkForMidnightReset() async {
@@ -584,7 +719,10 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
         children: [
           if (_timerVisible)
             ElevatedButton(
-              onPressed: _stopVisualTimer,
+              onPressed: () {
+                _stopVisualTimer;
+                _cancelNotification();
+              },
               child: Text("Stop Timer"),
             ),
           if (_timerVisible)

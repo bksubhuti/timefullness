@@ -7,7 +7,7 @@ plugins {
 android {
     namespace = "com.example.timefulness"
     compileSdk = 35
-    ndkVersion = "29.0.13113456"
+    ndkVersion = "29.0.13113456" // Revert to NDK 29 since it worked
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -21,8 +21,8 @@ android {
 
     defaultConfig {
         applicationId = "com.example.timefulness"
-        minSdk = 21 // Explicitly set to support flutter_local_notifications
-        targetSdk = 34
+        minSdk = 21
+        targetSdk = 35
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }

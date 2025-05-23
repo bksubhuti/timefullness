@@ -1,0 +1,11 @@
+oldres/drawable/ic_bg_service_small.png
+oldres/drawable/launch_background.xml
+oldres/drawable-v21/launch_background.xml
+oldres/mipmap-hdpi/ic_launcher.png
+oldres/mipmap-mdpi/ic_launcher.png
+oldres/mipmap-xhdpi/ic_launcher.png
+oldres/mipmap-xxhdpi/ic_launcher.png
+oldres/mipmap-xxxhdpi/ic_launcher.png
+oldres/raw/bell.mp3
+oldres/values-night/styles.xml
+oldres/values/styles.xml

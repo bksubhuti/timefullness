@@ -9,7 +9,7 @@ import 'package:timezone/timezone.dart' as tz;
 import 'package:flutter_timezone/flutter_timezone.dart';
 
 // Global singleton instance
-final notificationService = NotificationService();
+//final notificationService = NotificationService();
 
 class NotificationService {
   static final NotificationService _instance = NotificationService._internal();
@@ -64,23 +64,29 @@ class NotificationService {
                 .resolvePlatformSpecificImplementation<
                   AndroidFlutterLocalNotificationsPlugin
                 >();
-        final bool? notificationsEnabled =
+        bool notificationsEnabled =
             await androidPlugin?.areNotificationsEnabled() ?? false;
-        if (!notificationsEnabled!) {
-          final bool? granted =
-              await androidPlugin?.requestNotificationsPermission();
+        if (!notificationsEnabled) {
+          bool? granted = await androidPlugin?.requestNotificationsPermission();
           debugPrint('🔔 Notification permission granted: $granted');
+          notificationsEnabled = granted ?? false;
         }
-        final bool? exactAlarmPermitted =
+        if (!notificationsEnabled) return; // Exit if notifications not granted
+
+        bool exactAlarmPermitted =
             await androidPlugin?.canScheduleExactNotifications() ?? false;
-        if (!exactAlarmPermitted!) {
+        if (!exactAlarmPermitted) {
           const AndroidIntent intent = AndroidIntent(
             action: 'android.settings.REQUEST_SCHEDULE_EXACT_ALARM',
             flags: <int>[Flag.FLAG_ACTIVITY_NEW_TASK],
           );
           await intent.launch();
           debugPrint('🔔 Requested exact alarm permission');
+          // Recheck after intent
+          exactAlarmPermitted =
+              await androidPlugin?.canScheduleExactNotifications() ?? false;
         }
+        debugPrint('🔔 Exact alarm permitted: $exactAlarmPermitted');
       } else if (Platform.isIOS) {
         final IOSFlutterLocalNotificationsPlugin? iosPlugin =
             _flutterLocalNotificationsPlugin
@@ -151,6 +157,94 @@ class NotificationService {
       );
     } catch (e) {
       debugPrint("❌ Error scheduling notification: $e");
+    }
+  }
+
+  Future<void> _zonedScheduleNotification2() async {
+    try {
+      final now = tz.TZDateTime.now(tz.local);
+      final scheduledTime = now.add(const Duration(seconds: 5));
+      debugPrint('🔔 Current time: $now');
+      debugPrint('🔔 Scheduled time: $scheduledTime');
+      debugPrint('🔔 Timezone: ${tz.local}');
+
+      const AndroidNotificationDetails androidNotificationDetails =
+          AndroidNotificationDetails(
+            'timer_channel',
+            'Timer Alerts',
+            channelDescription: 'Channel for timer notifications',
+            importance: Importance.max,
+            priority: Priority.high,
+            sound: RawResourceAndroidNotificationSound('bell'),
+          );
+      const DarwinNotificationDetails iosDetails = DarwinNotificationDetails(
+        sound: 'bell.aiff',
+      );
+      const NotificationDetails notificationDetails = NotificationDetails(
+        android: androidNotificationDetails,
+        iOS: iosDetails,
+      );
+
+      await _flutterLocalNotificationsPlugin.zonedSchedule(
+        0, // id
+        'Timefulness', // title
+        'Scheduled notification (5 seconds)', // body
+        scheduledTime, // scheduledDate
+        notificationDetails, // notificationDetails
+        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+        payload: 'notification_0',
+        matchDateTimeComponents: null, // Not needed for one-time notification
+      );
+
+      debugPrint(
+        '🔔 Notification scheduled successfully: id=0, time=$scheduledTime',
+      );
+    } catch (e) {
+      debugPrint('❌ Error scheduling notification: $e');
+    }
+  }
+
+  Future<void> _zonedScheduleAlarmClockNotification() async {
+    try {
+      final now = tz.TZDateTime.now(tz.local);
+      final scheduledTime = now.add(const Duration(seconds: 5));
+      debugPrint('🔔 Current time: $now');
+      debugPrint('🔔 Scheduled time: $scheduledTime');
+      debugPrint('🔔 Timezone: ${tz.local}');
+
+      const AndroidNotificationDetails androidNotificationDetails =
+          AndroidNotificationDetails(
+            'alarm_clock_channel',
+            'Alarm Clock Channel',
+            channelDescription: 'Alarm Clock Notification',
+            importance: Importance.max,
+            priority: Priority.high,
+            sound: RawResourceAndroidNotificationSound('bell'),
+          );
+      const DarwinNotificationDetails iosDetails = DarwinNotificationDetails(
+        sound: 'bell.aiff',
+      );
+      const NotificationDetails notificationDetails = NotificationDetails(
+        android: androidNotificationDetails,
+        iOS: iosDetails,
+      );
+
+      await _flutterLocalNotificationsPlugin.zonedSchedule(
+        123, // id
+        'Timefulness', // title
+        'Scheduled alarm clock notification (5 seconds)', // body
+        scheduledTime, // scheduledDate
+        notificationDetails, // notificationDetails
+        androidScheduleMode: AndroidScheduleMode.alarmClock,
+        payload: 'notification_123',
+        matchDateTimeComponents: null, // Not needed for one-time notification
+      );
+
+      debugPrint(
+        '🔔 Alarm clock notification scheduled: id=123, time=$scheduledTime',
+      );
+    } catch (e) {
+      debugPrint('❌ Error scheduling alarm clock notification: $e');
     }
   }
 
