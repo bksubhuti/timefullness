@@ -4,7 +4,6 @@ import 'package:timefulness/models/prefs.dart';
 import 'package:timefulness/services/notification_service.dart';
 import 'screens/schedule_screen.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;

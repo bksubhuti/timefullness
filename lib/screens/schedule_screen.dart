@@ -39,7 +39,6 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
   bool _timerVisible = false;
   DateTime? _destinationTime;
   Timer? _updateTimer;
-
   @override
   void initState() {
     super.initState();
@@ -261,6 +260,8 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
       Prefs.destinationTime = _destinationTime = destination;
       WakelockPlus.enable();
 
+      // for testing
+      //      _destinationTime = DateTime.now().add(const Duration(seconds: 10));
       await notificationService.scheduleNotification(
         id: 1,
         title: 'Timefulness',
