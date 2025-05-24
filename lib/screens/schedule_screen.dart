@@ -58,7 +58,6 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
 
     _isAndroidPermissionGranted();
     _requestPermissions();
-    //    _configureSelectNotificationSubject();
 
     _resumeVisualTimerIfNeeded();
   }
@@ -159,6 +158,8 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
           'Timefulness channel id',
           'Timefulness channel name',
           channelDescription: 'Timefulness channel description',
+          sound: RawResourceAndroidNotificationSound('bell'),
+          playSound: true,
         ),
       ),
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
@@ -397,7 +398,9 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
         scheduledDateTime: _destinationTime!,
       );
       */
-      // call tihs instead
+      // TESTING
+      //_zonedScheduleNotification(Duration(seconds: 8));
+      ///////////////////////////////////////////////////////////////
       _zonedScheduleNotification(duration);
       _updateTimer?.cancel();
       _updateTimer = Timer.periodic(const Duration(seconds: 1), (_) {
@@ -440,6 +443,14 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
 
   Future<void> _cancelNotification() async {
     await flutterLocalNotificationsPlugin.cancel(--id);
+  }
+
+  Future<void> _cancelNotificationWithTag() async {
+    await flutterLocalNotificationsPlugin.cancel(--id, tag: 'tag');
+  }
+
+  Future<void> _cancelAllNotifications() async {
+    await flutterLocalNotificationsPlugin.cancelAll();
   }
 
   Future<void> _checkForMidnightReset() async {
@@ -719,9 +730,9 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
         children: [
           if (_timerVisible)
             ElevatedButton(
-              onPressed: () {
-                _stopVisualTimer;
-                _cancelNotification();
+              onPressed: () async {
+                _stopVisualTimer();
+                await _cancelAllNotifications();
               },
               child: Text("Stop Timer"),
             ),
