@@ -1,6 +1,6 @@
 # My Time Schedule
 
-A new Flutter project.
+A mindful daily schedule + to-do timer app.
 
 ## Getting Started
 
