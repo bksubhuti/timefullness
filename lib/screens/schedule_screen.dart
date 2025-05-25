@@ -842,7 +842,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
           (context) => AlertDialog(
             title: const Text('Help'),
             content: const Text(
-              '• Tap an item to start the timer.\n• Long-press to edit.\n• Use the menu for settings.',
+              '• Tap the clock icon to start the timer.\n• Use the menu for settings.',
             ),
             actions: [
               TextButton(

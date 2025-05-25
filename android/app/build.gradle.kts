@@ -1,3 +1,14 @@
+import java.util.Properties
+import java.io.FileInputStream
+
+
+val keystorePropertiesFile = rootProject.file("keystore.properties")
+val keystoreProperties = Properties().apply {
+    if (keystorePropertiesFile.exists()) {
+        load(keystorePropertiesFile.inputStream())
+    }
+}
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
@@ -27,13 +38,34 @@ android {
         versionName = flutter.versionName
     }
 
-    buildTypes {
-        release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")   
+    signingConfigs {
+    create("release") {
+        if (keystorePropertiesFile.exists()) {
+            storeFile = file(keystoreProperties["storeFile"] as String)
+            storePassword = keystoreProperties["storePassword"] as String
+            keyAlias = keystoreProperties["keyAlias"] as String
+            keyPassword = keystoreProperties["keyPassword"] as String
+        } else {
+            println("⚠️ No keystore.properties found. Falling back to debug signing.")
         }
     }
+}
+
+   buildTypes {
+    getByName("release") {
+        // if this line exists:
+        isShrinkResources = true
+        // make sure this line also exists:
+        isMinifyEnabled = true
+        
+        signingConfig = if (keystorePropertiesFile.exists()) {
+            signingConfigs.getByName("release")
+        } else {
+            signingConfigs.getByName("debug")
+        }
+    }
+   }
+
 }
 dependencies {
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
