@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:timefulness/models/prefs.dart';
+import 'package:my_time_schedule/models/prefs.dart';
 import '../models/schedule_item.dart';
 
 class ScheduleTile extends StatelessWidget {
@@ -60,7 +60,6 @@ class ScheduleTile extends StatelessWidget {
             ),
             const SizedBox(width: 12),
 
-            // Text content
             Expanded(
               child: AnimatedDefaultTextStyle(
                 duration: const Duration(milliseconds: 250),
@@ -75,11 +74,32 @@ class ScheduleTile extends StatelessWidget {
                           ? TextDecoration.lineThrough
                           : TextDecoration.none,
                 ),
-                child: Text(
-                  '${item.startTime} – ${item.endTime} | ${item.activity}',
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 4.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '${item.startTime} – ${item.endTime}',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Color(Prefs.timerColor),
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        item.activity,
+                        style: const TextStyle(
+                          fontSize: 14.5,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
+
             // Timer icon
             IconButton(
               icon: Icon(Icons.timer, size: 20, color: Color(Prefs.timerColor)),

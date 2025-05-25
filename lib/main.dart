@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:timefulness/models/prefs.dart';
-import 'package:timefulness/services/example_includes.dart';
-//import 'package:timefulness/services/notification_service.dart';
+import 'package:my_time_schedule/models/prefs.dart';
+import 'package:my_time_schedule/services/example_includes.dart';
+//import 'package:my_time_schedule/services/notification_service.dart';
 import 'screens/schedule_screen.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
@@ -130,7 +130,7 @@ Future<void> main() async {
   debugPrint("Hive initialized at ${dir.path}");
   await Hive.openBox('schedules');
   await Prefs.init();
-  runApp(const TimefulnessApp());
+  runApp(const MyTimeScheduleApp());
 }
 
 Future<void> _configureLocalTimeZone() async {
@@ -145,13 +145,13 @@ Future<void> _configureLocalTimeZone() async {
   tz.setLocalLocation(tz.getLocation(timeZoneName!));
 }
 
-class TimefulnessApp extends StatelessWidget {
-  const TimefulnessApp({super.key});
+class MyTimeScheduleApp extends StatelessWidget {
+  const MyTimeScheduleApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Timefulness',
+      title: 'My Time Schedule',
       home: const ScheduleScreen(),
       debugShowCheckedModeBanner: false,
     );

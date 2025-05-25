@@ -1,6 +1,6 @@
 {
-    "name": "timefulness",
-    "short_name": "timefulness",
+    "name": "My Time Schedule",
+    "short_name": "MySchedule",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

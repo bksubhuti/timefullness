@@ -187,7 +187,7 @@ class NotificationService {
 
       await _flutterLocalNotificationsPlugin.zonedSchedule(
         0, // id
-        'Timefulness', // title
+        'My Time Schedule', // title
         'Scheduled notification (5 seconds)', // body
         scheduledTime, // scheduledDate
         notificationDetails, // notificationDetails
@@ -231,7 +231,7 @@ class NotificationService {
 
       await _flutterLocalNotificationsPlugin.zonedSchedule(
         123, // id
-        'Timefulness', // title
+        'My Time Schedule', // title
         'Scheduled alarm clock notification (5 seconds)', // body
         scheduledTime, // scheduledDate
         notificationDetails, // notificationDetails

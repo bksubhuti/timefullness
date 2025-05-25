@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.timefulness"
+    namespace = "org.americanmonk.mytimeschedule"
     compileSdk = 35
     ndkVersion = "29.0.13113456" // Revert to NDK 29 since it worked
 
@@ -20,7 +20,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.example.timefulness"
+        applicationId = "org.americanmonk.mytimeschedule"
         minSdk = 21
         targetSdk = 35
         versionCode = flutter.versionCode

@@ -9,17 +9,17 @@ import 'package:intl/intl.dart';
 import 'package:csv/csv.dart';
 import 'package:flutter/services.dart';
 import 'package:audioplayers/audioplayers.dart';
-import 'package:timefulness/models/prefs.dart';
-import 'package:timefulness/plugin.dart';
-import 'package:timefulness/screens/settings_screen.dart';
-import 'package:timefulness/services/hive_schedule_repository.dart';
-import 'package:timefulness/services/notification_service.dart';
-import 'package:timefulness/widgets/duration_dial.dart';
-import 'package:timefulness/widgets/solid_visual_timer.dart';
+import 'package:my_time_schedule/models/prefs.dart';
+import 'package:my_time_schedule/plugin.dart';
+import 'package:my_time_schedule/screens/settings_screen.dart';
+import 'package:my_time_schedule/services/hive_schedule_repository.dart';
+import 'package:my_time_schedule/services/notification_service.dart';
+import 'package:my_time_schedule/widgets/duration_dial.dart';
+import 'package:my_time_schedule/widgets/solid_visual_timer.dart';
 import '../models/schedule_item.dart';
 import '../widgets/schedule_tile.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
-import 'package:timefulness/services/example_includes.dart';
+import 'package:my_time_schedule/services/example_includes.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
@@ -394,7 +394,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
       //_destinationTime = DateTime.now().add(const Duration(seconds: 10));
       /*      await notificationService.scheduleNotification(
         id: 1,
-        title: 'Timefulness',
+        title: 'My Time Schedule',
         body: '⏰ Your session is complete.',
         scheduledDateTime: _destinationTime!,
       );
@@ -769,7 +769,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
         ),
       ),
       appBar: AppBar(
-        title: const Text('Daily Timefulness'),
+        title: const Text('My Time Schedule'),
         actions: [
           IconButton(
             icon: const Icon(Icons.settings),
@@ -829,7 +829,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
   void _showAboutDialog(BuildContext context) {
     showAboutDialog(
       context: context,
-      applicationName: 'Timefulness',
+      applicationName: 'My Time Schedule',
       applicationVersion: '1.0.0',
       applicationLegalese: '© 2025 Bhante Subhuti',
     );

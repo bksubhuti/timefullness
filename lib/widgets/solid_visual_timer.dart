@@ -1,6 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:timefulness/models/prefs.dart';
+import 'package:my_time_schedule/models/prefs.dart';
 
 class SolidVisualTimer extends StatelessWidget {
   final int remaining;
