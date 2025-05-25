@@ -150,14 +150,15 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
   Future<void> _zonedScheduleNotification(Duration duration) async {
     await flutterLocalNotificationsPlugin.zonedSchedule(
       0,
-      'scheduled title',
-      'scheduled body',
+      'My Time Schedule',
+      'Your session has ended.',
       tz.TZDateTime.now(tz.local).add(duration),
       const NotificationDetails(
         android: AndroidNotificationDetails(
-          'Timefulness channel id',
-          'Timefulness channel name',
-          channelDescription: 'Timefulness channel description',
+          'my_time_schedule_channel',
+          'My Time Schedule Timer',
+          channelDescription:
+              'Notifications for your My Time Schedule timer sessions.',
           sound: RawResourceAndroidNotificationSound('bell'),
           playSound: true,
         ),
@@ -401,6 +402,8 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
       // TESTING
       //_zonedScheduleNotification(Duration(seconds: 8));
       ///////////////////////////////////////////////////////////////
+
+      //Platform.isAndroid
       _zonedScheduleNotification(duration);
       _updateTimer?.cancel();
       _updateTimer = Timer.periodic(const Duration(seconds: 1), (_) {
@@ -451,6 +454,64 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
 
   Future<void> _cancelAllNotifications() async {
     await flutterLocalNotificationsPlugin.cancelAll();
+  }
+
+  Future<void> _showProgressNotification(Duration duration) async {
+    id++;
+    final int progressId = id;
+    const int maxProgress = 5;
+    for (int i = 0; i <= maxProgress; i++) {
+      await Future<void>.delayed(duration, () async {
+        final AndroidNotificationDetails androidNotificationDetails =
+            AndroidNotificationDetails(
+              'progress channel',
+              'progress channel',
+              channelDescription: 'progress channel description',
+              channelShowBadge: false,
+              importance: Importance.max,
+              priority: Priority.high,
+              onlyAlertOnce: true,
+              showProgress: true,
+              maxProgress: maxProgress,
+              progress: i,
+            );
+        final NotificationDetails notificationDetails = NotificationDetails(
+          android: androidNotificationDetails,
+        );
+        await flutterLocalNotificationsPlugin.show(
+          progressId,
+          'progress notification title',
+          'progress notification body',
+          notificationDetails,
+          payload: 'item x',
+        );
+      });
+    }
+  }
+
+  Future<void> _showIndeterminateProgressNotification() async {
+    const AndroidNotificationDetails androidNotificationDetails =
+        AndroidNotificationDetails(
+          'indeterminate progress channel',
+          'indeterminate progress channel',
+          channelDescription: 'indeterminate progress channel description',
+          channelShowBadge: false,
+          importance: Importance.max,
+          priority: Priority.high,
+          onlyAlertOnce: true,
+          showProgress: true,
+          indeterminate: true,
+        );
+    const NotificationDetails notificationDetails = NotificationDetails(
+      android: androidNotificationDetails,
+    );
+    await flutterLocalNotificationsPlugin.show(
+      id++,
+      'indeterminate progress notification title',
+      'indeterminate progress notification body',
+      notificationDetails,
+      payload: 'item x',
+    );
   }
 
   Future<void> _checkForMidnightReset() async {
