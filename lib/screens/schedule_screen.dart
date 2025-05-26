@@ -348,7 +348,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     });
 
     // Play bell sound when item is checked (marked as done)
-    if (newValue) {
+    if (newValue && Prefs.shouldPlaySoundOnCheck) {
       _playBellSound();
     }
 

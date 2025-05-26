@@ -143,37 +143,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ],
           ),
-          /*          SwitchListTile(
-            title: const Text(
-              "Enable Background Service",
-              style: TextStyle(fontSize: 18),
-            ),
-            subtitle: const Text(
-              "Allow timer to run in background",
-              style: TextStyle(color: Colors.grey),
-            ),
-            value: _backgroundEnabled,
-            onChanged: (bool value) async {
+          const Divider(height: 40),
+          SwitchListTile(
+            title: const Text("Play sound when checked"),
+            subtitle: const Text("Play a sound when marking a task as done"),
+            value: Prefs.shouldPlaySoundOnCheck,
+            onChanged: (value) {
               setState(() {
-                _backgroundEnabled = value;
+                Prefs.shouldPlaySoundOnCheck = value;
               });
-              Prefs.backgroundEnabled = value;
-
-              final service = FlutterBackgroundService();
-              if (value) {
-                final success = await service.startService();
-                if (!success) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text("Failed to start background service."),
-                    ),
-                  );
-                }
-              } else {
-                service.invoke('stopService');
-              }
             },
-          ),*/
+          ),
+          const Divider(height: 40),
         ],
       ),
     );
@@ -240,7 +221,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Future<void> _renameSchedule() async {
     if (_selectedScheduleId.isEmpty) return;
-    if (_selectedScheduleId == DEFAULT_SCHEDULE_ID) {
+    if (_selectedScheduleId == defaultScheduleId) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text("You cannot rename the default schedule."),
@@ -305,7 +286,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Future<void> _deleteSchedule() async {
     if (_selectedScheduleId.isEmpty) return;
 
-    if (_selectedScheduleId == DEFAULT_SCHEDULE_ID) {
+    if (_selectedScheduleId == defaultScheduleId) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text("You cannot delete the default schedule."),

@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-const String TIMER_COLOR = "timerColor";
-const String CURRENT_SCHEDULE_ID = 'currentScheduleId';
-const String DEFAULT_SCHEDULE_ID = 'Default';
-const String BACKGROUND_ENABLED = 'backgroundEnabled';
-const String DESTINATION_TIME = 'destinationTime';
-const String ACTIVE_TIMER_DURATION = 'activeTimerDuration';
+const String timerColorPref = "timerColor";
+const String currentScheduleIdPref = 'currentScheduleId';
+const String defaultScheduleId = 'Default';
+const String backgroundEnabledPref = 'backgroundEnabled';
+const String destinationTimePref = 'destinationTime';
+const String activeTimerDurationPref = 'activeTimerDuration';
+const String remainingSecondsPref = 'remainingSeconds';
+const String timerPausedPref = 'timerPaused';
+const String shouldPlaySoundOnCheckPref = 'shouldPlaySoundOnCheck';
 
-const int DEFAULT_TIMER_COLOR = 0xFF2196F3; // Blue
+const int defaultTimerColor = 0xFF2196F3; // Blue
 
 class Prefs {
   static late final SharedPreferences instance;
@@ -23,36 +26,56 @@ class Prefs {
   }
 
   static int get timerColor =>
-      instance.getInt(TIMER_COLOR) ?? DEFAULT_TIMER_COLOR;
-  static set timerColor(int value) => instance.setInt(TIMER_COLOR, value);
+      instance.getInt(timerColorPref) ?? defaultTimerColor;
+  static set timerColor(int value) => instance.setInt(timerColorPref, value);
 
   static String get currentScheduleId =>
-      instance.getString(CURRENT_SCHEDULE_ID) ?? DEFAULT_SCHEDULE_ID;
+      instance.getString(currentScheduleIdPref) ?? defaultScheduleId;
   static set currentScheduleId(String value) =>
-      instance.setString(CURRENT_SCHEDULE_ID, value);
+      instance.setString(currentScheduleIdPref, value);
 
   static bool get backgroundEnabled =>
-      instance.getBool(BACKGROUND_ENABLED) ?? false;
+      instance.getBool(backgroundEnabledPref) ?? false;
   static set backgroundEnabled(bool value) =>
-      instance.setBool(BACKGROUND_ENABLED, value);
+      instance.setBool(backgroundEnabledPref, value);
 
   static DateTime? get destinationTime {
-    final iso = instance.getString(DESTINATION_TIME);
+    final iso = instance.getString(destinationTimePref);
     if (iso == null) return null;
     return DateTime.tryParse(iso);
   }
 
   static set destinationTime(DateTime? value) {
     if (value == null) {
-      instance.remove(DESTINATION_TIME);
+      instance.remove(destinationTimePref);
     } else {
-      instance.setString(DESTINATION_TIME, value.toIso8601String());
+      instance.setString(destinationTimePref, value.toIso8601String());
     }
   }
 
   static int get activeTimerDuration =>
-      instance.getInt(ACTIVE_TIMER_DURATION) ?? 0;
-
+      instance.getInt(activeTimerDurationPref) ?? 0;
   static set activeTimerDuration(int value) =>
-      instance.setInt(ACTIVE_TIMER_DURATION, value);
+      instance.setInt(activeTimerDurationPref, value);
+
+  static int? get remainingSeconds =>
+      instance.containsKey(remainingSecondsPref)
+          ? instance.getInt(remainingSecondsPref)
+          : null;
+  static set remainingSeconds(int? value) {
+    if (value == null) {
+      instance.remove(remainingSecondsPref);
+    } else {
+      instance.setInt(remainingSecondsPref, value);
+    }
+  }
+
+  static bool get timerPaused => instance.getBool(timerPausedPref) ?? false;
+  static set timerPaused(bool value) =>
+      instance.setBool(timerPausedPref, value);
+
+  static bool get shouldPlaySoundOnCheck =>
+      instance.getBool(shouldPlaySoundOnCheckPref) ?? true;
+  static set shouldPlaySoundOnCheck(bool value) =>
+      instance.setBool(shouldPlaySoundOnCheckPref, value);
 }
