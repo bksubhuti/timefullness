@@ -17,10 +17,12 @@ class SolidVisualTimer extends StatelessWidget {
     final double progress = total == 0 ? 0 : remaining / total;
     final minutes = remaining ~/ 60;
     final seconds = remaining % 60;
-    final timeStr =
+    String timeStr =
         minutes > 0
             ? "$minutes:${seconds.toString().padLeft(2, '0')}"
             : "$seconds s";
+
+    if (remaining == 0) timeStr = "Finished";
 
     return LayoutBuilder(
       builder: (context, constraints) {

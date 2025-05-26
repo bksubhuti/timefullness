@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:my_time_schedule/screens/timer_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 import 'package:csv/csv.dart';
@@ -13,14 +14,11 @@ import 'package:my_time_schedule/models/prefs.dart';
 import 'package:my_time_schedule/plugin.dart';
 import 'package:my_time_schedule/screens/settings_screen.dart';
 import 'package:my_time_schedule/services/hive_schedule_repository.dart';
-import 'package:my_time_schedule/services/notification_service.dart';
 import 'package:my_time_schedule/widgets/duration_dial.dart';
-import 'package:my_time_schedule/widgets/solid_visual_timer.dart';
 import '../models/schedule_item.dart';
 import '../widgets/schedule_tile.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:my_time_schedule/services/example_includes.dart';
-import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
 class ScheduleScreen extends StatefulWidget {
@@ -38,13 +36,14 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
   final AudioPlayer _audioPlayer = AudioPlayer();
   bool _isDefaultScheduleLoaded = false;
   late final HiveScheduleRepository scheduleRepo;
-  static const String defaultScheduleId = 'default';
+  static const String defaultScheduleId = 'Default';
   int _activeDuration = 0;
   int _remainingSeconds = 0;
   Timer? _countdownTimer;
   bool _timerVisible = false;
   DateTime? _destinationTime;
   Timer? _updateTimer;
+  final ValueNotifier<int> timerNotifier = ValueNotifier(0);
 
   // eample stuff
   bool _notificationsEnabled = false;
@@ -161,6 +160,8 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
               'Notifications for your My Time Schedule timer sessions.',
           sound: RawResourceAndroidNotificationSound('bell'),
           playSound: true,
+          importance: Importance.max,
+          priority: Priority.high,
         ),
       ),
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
@@ -383,52 +384,50 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
       final start = format.parse(_cleanTime(item.startTime));
       final end = format.parse(_cleanTime(item.endTime));
       final duration = end.difference(start);
+      final int totalSeconds = duration.inSeconds;
 
       final now = DateTime.now();
       final destination = now.add(duration);
 
       Prefs.destinationTime = _destinationTime = destination;
+      _activeDuration = totalSeconds;
+      _remainingSeconds = totalSeconds;
+      Prefs.activeTimerDuration = totalSeconds;
+      timerNotifier.value = totalSeconds;
+
       WakelockPlus.enable();
 
-      //for testing
-      //_destinationTime = DateTime.now().add(const Duration(seconds: 10));
-      /*      await notificationService.scheduleNotification(
-        id: 1,
-        title: 'My Time Schedule',
-        body: '⏰ Your session is complete.',
-        scheduledDateTime: _destinationTime!,
-      );
-      */
-      // TESTING
-      //_zonedScheduleNotification(Duration(seconds: 8));
-      ///////////////////////////////////////////////////////////////
-
-      //Platform.isAndroid
       _zonedScheduleNotification(duration);
+
       _updateTimer?.cancel();
       _updateTimer = Timer.periodic(const Duration(seconds: 1), (_) {
         final now = DateTime.now();
         final remaining = _destinationTime!.difference(now).inSeconds;
 
         if (remaining <= 0) {
+          timerNotifier.value = 0;
           _stopVisualTimer();
           _playBellSound();
           WakelockPlus.disable();
         } else {
-          setState(() {
-            _remainingSeconds = remaining;
-            _activeDuration = duration.inSeconds;
-            Prefs.activeTimerDuration = _activeDuration;
-            _timerVisible = true;
-          });
+          timerNotifier.value = remaining;
         }
       });
 
-      setState(() {
-        _remainingSeconds = duration.inSeconds;
-        _activeDuration = duration.inSeconds;
-        _timerVisible = true;
-      });
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder:
+              (_) => TimerScreen(
+                totalSeconds: totalSeconds,
+                timerNotifier: timerNotifier,
+                onStop: () {
+                  _stopVisualTimer();
+                  _cancelAllNotifications();
+                },
+              ),
+        ),
+      );
     } catch (e) {
       debugPrint('❌ Could not start visual timer: $e');
       if (await WakelockPlus.enabled) WakelockPlus.disable();
@@ -602,6 +601,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
       _updateTimer = Timer.periodic(const Duration(seconds: 1), (_) {
         final remaining =
             _destinationTime!.difference(DateTime.now()).inSeconds;
+        timerNotifier.value = remaining;
         if (remaining <= 0) {
           _stopVisualTimer();
           _playBellSound(timer: true);
@@ -615,6 +615,22 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
 
       setState(() {
         _timerVisible = true;
+      });
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder:
+                (_) => TimerScreen(
+                  totalSeconds: _activeDuration,
+                  timerNotifier: timerNotifier,
+                  onStop: () {
+                    _stopVisualTimer();
+                    _cancelAllNotifications();
+                  },
+                ),
+          ),
+        );
       });
     } else {
       Prefs.destinationTime = null;
@@ -789,19 +805,12 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
       ),
       body: Column(
         children: [
-          if (_timerVisible)
-            ElevatedButton(
-              onPressed: () async {
-                _stopVisualTimer();
-                await _cancelAllNotifications();
-              },
-              child: Text("Stop Timer"),
-            ),
-          if (_timerVisible)
-            SolidVisualTimer(
-              remaining: _remainingSeconds,
-              total: _activeDuration,
-            ),
+          Text(
+            "${Prefs.currentScheduleId} Schedule: ",
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 10),
+
           Expanded(
             child: ListView.builder(
               itemCount: schedule.length,
@@ -842,7 +851,12 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
           (context) => AlertDialog(
             title: const Text('Help'),
             content: const Text(
-              '• Tap the clock icon to start the timer.\n• Use the menu for settings.',
+              '• Schedule your entire day using focused 50-minute sessions.\n'
+              '• Be sure to insert 10-minute breaks between sessions — this is a proven method to maintain energy and concentration.\n'
+              '• Don’t forget to schedule free time! This is the most important part.\n'
+              '  By planning free time in advance, you manage it intentionally rather than losing it.\n'
+              '• Tap the clock icon to start a timer for any scheduled activity.\n'
+              '• Use the menu to access settings and customize your preferences.',
             ),
             actions: [
               TextButton(

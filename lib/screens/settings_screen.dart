@@ -1,5 +1,6 @@
 // settings_screen.dart
 import 'package:flutter/material.dart';
+import 'package:my_time_schedule/models/schedule_item.dart';
 import '../models/prefs.dart';
 import '../services/hive_schedule_repository.dart';
 import 'package:hive/hive.dart';
@@ -36,7 +37,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
     setState(() {
       _scheduleIds = ids;
-      _selectedScheduleId = active ?? (ids.isNotEmpty ? ids.first : '');
+      if (active != null && ids.contains(active)) {
+        _selectedScheduleId = active;
+      } else {
+        _selectedScheduleId = ids.isNotEmpty ? ids.first : '';
+      }
     });
   }
 
@@ -102,11 +107,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
           const Text("Select Active Schedule", style: TextStyle(fontSize: 18)),
           const SizedBox(height: 10),
           DropdownButton<String>(
-            value: _selectedScheduleId.isNotEmpty ? _selectedScheduleId : null,
+            value:
+                _scheduleIds.contains(_selectedScheduleId)
+                    ? _selectedScheduleId
+                    : null,
             hint: const Text("Select Schedule"),
             items:
                 _scheduleIds.map((id) {
-                  return DropdownMenuItem(value: id, child: Text(id));
+                  return DropdownMenuItem<String>(value: id, child: Text(id));
                 }).toList(),
             onChanged: (value) async {
               if (value == null) return;
@@ -208,19 +216,38 @@ class _SettingsScreenState extends State<SettingsScreen> {
       return;
     }
 
-    await scheduleRepo.saveSchedule(name, []);
+    // Add default entry
+    await scheduleRepo.saveSchedule(name, [
+      ScheduleItem(
+        id: UniqueKey().toString(),
+        startTime: '6:00 AM',
+        endTime: '7:00 AM',
+        activity: 'Meditation',
+      ),
+    ]);
+
+    // Set active and save preferences
     await scheduleRepo.setActiveScheduleId(name);
     Prefs.currentScheduleId = name;
+
+    // Reload from source to avoid duplicates
     await _loadScheduleData();
 
     setState(() {
       _selectedScheduleId = name;
-      _scheduleIds.add(name);
     });
   }
 
   Future<void> _renameSchedule() async {
     if (_selectedScheduleId.isEmpty) return;
+    if (_selectedScheduleId == DEFAULT_SCHEDULE_ID) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("You cannot rename the default schedule."),
+        ),
+      );
+      return;
+    }
 
     final controller = TextEditingController(text: _selectedScheduleId);
 
@@ -268,15 +295,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
       Prefs.currentScheduleId = newName;
     }
 
+    await _loadScheduleData();
+
     setState(() {
-      final idx = _scheduleIds.indexOf(_selectedScheduleId);
-      _scheduleIds[idx] = newName;
       _selectedScheduleId = newName;
     });
   }
 
   Future<void> _deleteSchedule() async {
     if (_selectedScheduleId.isEmpty) return;
+
+    if (_selectedScheduleId == DEFAULT_SCHEDULE_ID) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("You cannot delete the default schedule."),
+        ),
+      );
+      return;
+    }
 
     final confirm = await showDialog<bool>(
       context: context,
@@ -302,24 +338,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
     if (confirm != true) return;
 
     await scheduleRepo.deleteSchedule(_selectedScheduleId);
-    final wasActive =
-        await scheduleRepo.getActiveScheduleId() == _selectedScheduleId;
-    if (wasActive) {
-      final remaining =
-          _scheduleIds.where((id) => id != _selectedScheduleId).toList();
-      if (remaining.isNotEmpty) {
-        await scheduleRepo.setActiveScheduleId(remaining.first);
-        Prefs.currentScheduleId = remaining.first;
-        _selectedScheduleId = remaining.first;
-      } else {
-        await scheduleRepo.setActiveScheduleId('');
-        Prefs.currentScheduleId = '';
-        _selectedScheduleId = '';
-      }
+
+    final remaining =
+        _scheduleIds.where((id) => id != _selectedScheduleId).toList();
+    String newSelectedId = '';
+    if (remaining.isNotEmpty) {
+      newSelectedId = remaining.first;
+      await scheduleRepo.setActiveScheduleId(newSelectedId);
+      Prefs.currentScheduleId = newSelectedId;
+    } else {
+      await scheduleRepo.setActiveScheduleId('');
+      Prefs.currentScheduleId = '';
     }
 
+    await _loadScheduleData();
+
     setState(() {
-      _scheduleIds.remove(_selectedScheduleId);
+      _selectedScheduleId = newSelectedId;
     });
   }
 }

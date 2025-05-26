@@ -3,7 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 const String TIMER_COLOR = "timerColor";
 const String CURRENT_SCHEDULE_ID = 'currentScheduleId';
-const String DEFAULT_SCHEDULE_ID = 'default';
+const String DEFAULT_SCHEDULE_ID = 'Default';
 const String BACKGROUND_ENABLED = 'backgroundEnabled';
 const String DESTINATION_TIME = 'destinationTime';
 const String ACTIVE_TIMER_DURATION = 'activeTimerDuration';
