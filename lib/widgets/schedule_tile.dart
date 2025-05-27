@@ -20,10 +20,11 @@ class ScheduleTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      borderRadius: BorderRadius.circular(8),
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 6),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 6.0),
+        padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 6.0),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -60,6 +61,7 @@ class ScheduleTile extends StatelessWidget {
             ),
             const SizedBox(width: 12),
 
+            // Content column
             Expanded(
               child: AnimatedDefaultTextStyle(
                 duration: const Duration(milliseconds: 250),
@@ -79,12 +81,25 @@ class ScheduleTile extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        '${item.startTime} – ${item.endTime}',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Color(Prefs.timerColor),
-                        ),
+                      Row(
+                        children: [
+                          Text(
+                            '${item.startTime} – ${item.endTime}',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Color(Prefs.timerColor),
+                            ),
+                          ),
+                          IconButton(
+                            icon: Icon(
+                              Icons.edit,
+                              size: 20,
+                              color: Color(Prefs.timerColor),
+                            ),
+                            onPressed: onEdit,
+                            tooltip: 'Start Timer',
+                          ),
+                        ],
                       ),
                       const SizedBox(height: 2),
                       Text(
@@ -100,45 +115,44 @@ class ScheduleTile extends StatelessWidget {
               ),
             ),
 
-            // Timer icon
             IconButton(
               icon: Icon(Icons.timer, size: 20, color: Color(Prefs.timerColor)),
               onPressed: onTap,
-              tooltip: 'Start Timer',
+              tooltip: 'Launch Timer',
             ),
+            IconButton(
+              icon: Icon(
+                Icons.delete,
+                size: 20,
+                color: Color(Prefs.timerColor),
+              ),
+              tooltip: 'Delete',
+              onPressed: () async {
+                final confirm = await showDialog<bool>(
+                  context: context,
+                  builder:
+                      (context) => AlertDialog(
+                        title: const Text('Are you sure?'),
+                        content: const Text(
+                          'Do you really want to delete this item?',
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.of(context).pop(false),
+                            child: const Text('Cancel'),
+                          ),
+                          ElevatedButton(
+                            onPressed: () => Navigator.of(context).pop(true),
+                            child: const Text('Delete'),
+                          ),
+                        ],
+                      ),
+                );
 
-            // Popup menu
-            PopupMenuButton<String>(
-              onSelected: (value) {
-                if (value == 'edit') onEdit?.call();
-                if (value == 'delete') onDelete.call();
+                if (confirm == true) {
+                  onDelete();
+                }
               },
-              itemBuilder:
-                  (context) => [
-                    PopupMenuItem(
-                      value: 'edit',
-                      child: Row(
-                        children: const [
-                          Icon(Icons.edit, size: 18),
-                          SizedBox(width: 8),
-                          Text('Edit'),
-                        ],
-                      ),
-                    ),
-                    PopupMenuItem(
-                      value: 'delete',
-                      child: Row(
-                        children: const [
-                          Icon(Icons.delete, size: 18, color: Colors.red),
-                          SizedBox(width: 8),
-                          Text('Delete'),
-                        ],
-                      ),
-                    ),
-                  ],
-              icon: const Icon(Icons.more_vert, size: 20),
-              tooltip: 'More',
-              padding: EdgeInsets.zero,
             ),
           ],
         ),

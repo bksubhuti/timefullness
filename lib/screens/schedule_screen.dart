@@ -55,7 +55,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     scheduleRepo = HiveScheduleRepository(box);
     _loadSchedule();
 
-    _isAndroidPermissionGranted();
+    if (Platform.isAndroid) _isAndroidPermissionGranted();
     _requestPermissions();
 
     _resumeVisualTimerIfNeeded();
@@ -137,6 +137,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     }
   }
 
+  /*
   Future<void> _requestNotificationPolicyAccess() async {
     final AndroidFlutterLocalNotificationsPlugin? androidImplementation =
         flutterLocalNotificationsPlugin
@@ -145,27 +146,47 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
             >();
     await androidImplementation?.requestNotificationPolicyAccess();
   }
-
+*/
   Future<void> _zonedScheduleNotification(Duration duration) async {
-    await flutterLocalNotificationsPlugin.zonedSchedule(
-      0,
-      'My Time Schedule',
-      'Your session has ended.',
-      tz.TZDateTime.now(tz.local).add(duration),
-      const NotificationDetails(
-        android: AndroidNotificationDetails(
-          'my_time_schedule_channel',
-          'My Time Schedule Timer',
-          channelDescription:
-              'Notifications for your My Time Schedule timer sessions.',
-          sound: RawResourceAndroidNotificationSound('bell'),
-          playSound: true,
-          importance: Importance.max,
-          priority: Priority.high,
-        ),
+    final scheduledTime = tz.TZDateTime.now(tz.local).add(duration);
+
+    const notificationDetails = NotificationDetails(
+      android: AndroidNotificationDetails(
+        'my_time_schedule_channel',
+        'My Time Schedule Timer',
+        channelDescription:
+            'Notifications for your My Time Schedule timer sessions.',
+        sound: RawResourceAndroidNotificationSound('bell'),
+        playSound: true,
+        importance: Importance.max,
+        priority: Priority.high,
       ),
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      iOS: DarwinNotificationDetails(
+        sound: 'bell.wav', // Ensure it's included in iOS assets
+      ),
+      macOS: DarwinNotificationDetails(sound: 'bell.wav'),
     );
+
+    if (Platform.isAndroid || Platform.isIOS || Platform.isMacOS) {
+      await flutterLocalNotificationsPlugin.zonedSchedule(
+        0,
+        'My Time Schedule',
+        'Your session has ended.',
+        scheduledTime,
+        notificationDetails,
+        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      );
+    } else if (Platform.isLinux || Platform.isWindows) {
+      // Fallback: simulate schedule with delayed Timer
+      Timer(duration, () async {
+        await flutterLocalNotificationsPlugin.show(
+          0,
+          'My Time Schedule',
+          'Your session has ended.',
+          notificationDetails,
+        );
+      });
+    }
   }
 
   Future<void> _zonedScheduleAlarmClockNotification() async {
@@ -397,7 +418,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
 
       WakelockPlus.enable();
 
-      _zonedScheduleNotification(duration);
+      await _zonedScheduleNotification(duration);
 
       _updateTimer?.cancel();
       _updateTimer = Timer.periodic(const Duration(seconds: 1), (_) {
@@ -455,7 +476,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     await flutterLocalNotificationsPlugin.cancelAll();
   }
 
-  Future<void> _showProgressNotification(Duration duration) async {
+  /*  Future<void> _showProgressNotification(Duration duration) async {
     id++;
     final int progressId = id;
     const int maxProgress = 5;
@@ -512,7 +533,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
       payload: 'item x',
     );
   }
-
+*/
   Future<void> _checkForMidnightReset() async {
     final prefs = await SharedPreferences.getInstance();
     final lastResetDate = prefs.getString('lastResetDate');

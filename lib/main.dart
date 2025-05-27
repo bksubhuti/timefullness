@@ -125,10 +125,10 @@ Future<void> main() async {
 }
 
 Future<void> _configureLocalTimeZone() async {
-  if (kIsWeb || Platform.isLinux) {
+  tz.initializeTimeZones();
+  if (kIsWeb) {
     return;
   }
-  tz.initializeTimeZones();
   if (Platform.isWindows) {
     return;
   }
