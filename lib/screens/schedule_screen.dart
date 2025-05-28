@@ -162,9 +162,12 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
         priority: Priority.high,
       ),
       iOS: DarwinNotificationDetails(
-        sound: 'bell.wav', // Ensure it's included in iOS assets
+        presentAlert: true,
+        presentBadge: true,
+        presentSound: true,
+        sound: 'bell.aiff', // Ensure it's included in iOS assets
       ),
-      macOS: DarwinNotificationDetails(sound: 'bell.wav'),
+      macOS: DarwinNotificationDetails(sound: 'bell.aiff'),
     );
 
     if (Platform.isAndroid || Platform.isIOS || Platform.isMacOS) {
@@ -428,7 +431,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
         if (remaining <= 0) {
           timerNotifier.value = 0;
           _stopVisualTimer();
-          _playBellSound();
+          // _playBellSound(); // why?
           WakelockPlus.disable();
         } else {
           timerNotifier.value = remaining;
@@ -625,7 +628,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
         timerNotifier.value = remaining;
         if (remaining <= 0) {
           _stopVisualTimer();
-          _playBellSound(timer: true);
+          // _playBellSound(timer: true); // why?
         } else {
           setState(() {
             _remainingSeconds = remaining;
