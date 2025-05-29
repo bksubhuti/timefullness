@@ -21,6 +21,10 @@ import 'package:timezone/timezone.dart' as tz;
 
 import 'plugin.dart';
 import 'windows.dart' as windows;
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
+import 'providers/locale_provider.dart';
 
 /// IMPORTANT: running the following code on its own won't work as there is
 /// setup required for each platform head project.
@@ -121,7 +125,15 @@ Future<void> main() async {
   debugPrint("Hive initialized at ${dir.path}");
   await Hive.openBox('schedules');
   await Prefs.init();
-  runApp(const MyTimeScheduleApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => LocaleProvider()),
+        // Add more providers here as needed
+      ],
+      child: const MyTimeScheduleApp(),
+    ),
+  );
 }
 
 Future<void> _configureLocalTimeZone() async {
@@ -141,10 +153,23 @@ class MyTimeScheduleApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localeProvider = Provider.of<LocaleProvider>(context);
     return MaterialApp(
       title: 'My Time Schedule',
       home: const ScheduleScreen(),
+      locale: localeProvider.locale,
       debugShowCheckedModeBanner: false,
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('en'), // English
+        Locale('si'), // English
+        Locale('my'), // English
+      ],
     );
   }
 }

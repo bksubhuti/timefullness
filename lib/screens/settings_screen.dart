@@ -5,6 +5,10 @@ import '../models/prefs.dart';
 import '../services/hive_schedule_repository.dart';
 import 'package:hive/hive.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
+import '../providers/locale_provider.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -64,17 +68,42 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Settings")),
+      appBar: AppBar(title: Text(AppLocalizations.of(context)!.settingsTitle)),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
+          const Divider(height: 40),
+          const Text("App Language", style: TextStyle(fontSize: 18)),
+          const SizedBox(height: 10),
+          Consumer<LocaleProvider>(
+            builder: (context, localeProvider, _) {
+              final currentLocale = localeProvider.locale?.languageCode ?? 'en';
+              return DropdownButton<String>(
+                value: currentLocale,
+                onChanged: (String? code) {
+                  if (code == null) return;
+                  final newLocale = Locale(code);
+                  localeProvider.setLocale(newLocale);
+                },
+                items:
+                    supportedLocales.map((locale) {
+                      return DropdownMenuItem(
+                        value: locale.languageCode,
+                        child: Text(languageLabels[locale.languageCode]!),
+                      );
+                    }).toList(),
+              );
+            },
+          ),
+          const Divider(height: 40),
+
           ListTile(
-            title: const Text(
-              "Timer Circle Color",
+            title: Text(
+              AppLocalizations.of(context)!.timerCircleColor,
               style: TextStyle(fontSize: 18),
             ),
             subtitle: Text(
-              "Tap to select",
+              AppLocalizations.of(context)!.tapToSelect,
               style: TextStyle(color: Colors.grey.shade600),
             ),
             trailing: CircleAvatar(backgroundColor: Color(Prefs.timerColor)),
@@ -83,7 +112,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   context: context,
                   builder:
                       (_) => AlertDialog(
-                        title: const Text('Pick Timer Color'),
+                        title: Text(
+                          AppLocalizations.of(context)!.pickTimerColor,
+                        ),
                         content: SingleChildScrollView(
                           child: ColorPicker(
                             pickerColor: Color(Prefs.timerColor),
@@ -96,7 +127,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         ),
                         actions: [
                           TextButton(
-                            child: const Text('Close'),
+                            child: Text(AppLocalizations.of(context)!.close),
                             onPressed: () => Navigator.of(context).pop(),
                           ),
                         ],
@@ -104,14 +135,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
           ),
           const Divider(height: 40),
-          const Text("Select Active Schedule", style: TextStyle(fontSize: 18)),
+          Text(
+            AppLocalizations.of(context)!.selectActiveSchedule,
+            style: TextStyle(fontSize: 18),
+          ),
           const SizedBox(height: 10),
           DropdownButton<String>(
             value:
                 _scheduleIds.contains(_selectedScheduleId)
                     ? _selectedScheduleId
                     : null,
-            hint: const Text("Select Schedule"),
+            hint: Text(AppLocalizations.of(context)!.selectActiveSchedule),
             items:
                 _scheduleIds.map((id) {
                   return DropdownMenuItem<String>(value: id, child: Text(id));
@@ -131,22 +165,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
             children: [
               ElevatedButton(
                 onPressed: _addNewSchedule,
-                child: const Text("Add"),
+                child: Text(AppLocalizations.of(context)!.add),
               ),
               ElevatedButton(
                 onPressed: _renameSchedule,
-                child: const Text("Rename"),
+                child: Text(AppLocalizations.of(context)!.rename),
               ),
               ElevatedButton(
                 onPressed: _deleteSchedule,
-                child: const Text("Delete"),
+                child: Text(AppLocalizations.of(context)!.delete),
               ),
             ],
           ),
           const Divider(height: 40),
           SwitchListTile(
-            title: const Text("Play sound when checked"),
-            subtitle: const Text("Play a sound when marking a task as done"),
+            title: Text(AppLocalizations.of(context)!.playSoundWhenChecked),
+            subtitle: Text(AppLocalizations.of(context)!.playSoundSubtitle),
             value: Prefs.shouldPlaySoundOnCheck,
             onChanged: (value) {
               setState(() {
@@ -167,21 +201,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
       context: context,
       builder:
           (context) => AlertDialog(
-            title: const Text('New Schedule Name'),
+            title: Text(AppLocalizations.of(context)!.newScheduleName),
             content: TextField(
               controller: controller,
-              decoration: const InputDecoration(
-                hintText: 'Enter schedule name',
+              decoration: InputDecoration(
+                hintText: AppLocalizations.of(context)!.enterScheduleName,
               ),
             ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: const Text('Cancel'),
+                child: Text(AppLocalizations.of(context)!.cancel),
               ),
               ElevatedButton(
                 onPressed: () => Navigator.pop(context, controller.text.trim()),
-                child: const Text('Create'),
+                child: Text(AppLocalizations.of(context)!.create),
               ),
             ],
           ),
@@ -223,8 +257,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
     if (_selectedScheduleId.isEmpty) return;
     if (_selectedScheduleId == defaultScheduleId) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("You cannot rename the default schedule."),
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.youCannotRenameDefault),
         ),
       );
       return;
@@ -244,11 +278,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: const Text('Cancel'),
+                child: Text(AppLocalizations.of(context)!.cancel),
               ),
               ElevatedButton(
                 onPressed: () => Navigator.pop(context, controller.text.trim()),
-                child: const Text('Rename'),
+                child: Text(AppLocalizations.of(context)!.rename),
               ),
             ],
           ),
@@ -288,8 +322,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
     if (_selectedScheduleId == defaultScheduleId) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("You cannot delete the default schedule."),
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.youCannotDeleteDefault),
         ),
       );
       return;
@@ -306,11 +340,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context, false),
-                child: const Text('Cancel'),
+                child: Text(AppLocalizations.of(context)!.cancel),
               ),
               ElevatedButton(
                 onPressed: () => Navigator.pop(context, true),
-                child: const Text('Delete'),
+                child: Text(AppLocalizations.of(context)!.delete),
               ),
             ],
           ),
