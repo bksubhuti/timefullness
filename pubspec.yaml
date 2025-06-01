@@ -81,6 +81,8 @@ flutter:
     - assets/bell.wav
     - assets/daily schedule - Sheet1.csv
     - assets/icons/checked_icon.png
+    - assets/icon/icon.png
+
 #    - icons/
  #   - sound/
 

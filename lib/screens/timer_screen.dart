@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_time_schedule/widgets/solid_visual_timer.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class TimerScreen extends StatelessWidget {
   final ValueNotifier<int> timerNotifier;
@@ -15,6 +16,8 @@ class TimerScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return WillPopScope(
       onWillPop: () async {
         onStop(); // stop timer and cancel notifications
@@ -22,7 +25,7 @@ class TimerScreen extends StatelessWidget {
       },
       child: Scaffold(
         backgroundColor: Colors.black,
-        appBar: AppBar(title: const Text('Timer')),
+        appBar: AppBar(title: Text(l10n.timer)),
         body: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -42,7 +45,7 @@ class TimerScreen extends StatelessWidget {
                 Navigator.pop(context);
               },
               icon: const Icon(Icons.stop),
-              label: const Text('Stop Timer'),
+              label: Text(l10n.stopTimer),
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 24,

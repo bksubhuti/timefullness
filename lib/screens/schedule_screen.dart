@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:my_time_schedule/dialogs/help_dialog.dart';
 import 'package:my_time_schedule/screens/timer_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
@@ -15,11 +16,14 @@ import 'package:my_time_schedule/plugin.dart';
 import 'package:my_time_schedule/screens/settings_screen.dart';
 import 'package:my_time_schedule/services/hive_schedule_repository.dart';
 import 'package:my_time_schedule/widgets/duration_dial.dart';
+import 'package:my_time_schedule/dialogs/add_schedule_content_dialog.dart';
 import '../models/schedule_item.dart';
 import '../widgets/schedule_tile.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:my_time_schedule/services/example_includes.dart';
 import 'package:timezone/timezone.dart' as tz;
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 class ScheduleScreen extends StatefulWidget {
   const ScheduleScreen({super.key});
@@ -137,18 +141,9 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     }
   }
 
-  /*
-  Future<void> _requestNotificationPolicyAccess() async {
-    final AndroidFlutterLocalNotificationsPlugin? androidImplementation =
-        flutterLocalNotificationsPlugin
-            .resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin
-            >();
-    await androidImplementation?.requestNotificationPolicyAccess();
-  }
-*/
   Future<void> _zonedScheduleNotification(Duration duration) async {
     final scheduledTime = tz.TZDateTime.now(tz.local).add(duration);
+    final l10n = AppLocalizations.of(context)!;
 
     const notificationDetails = NotificationDetails(
       android: AndroidNotificationDetails(
@@ -173,8 +168,8 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     if (Platform.isAndroid || Platform.isIOS || Platform.isMacOS) {
       await flutterLocalNotificationsPlugin.zonedSchedule(
         0,
-        'My Time Schedule',
-        'Your session has ended.',
+        l10n.appName,
+        l10n.yourSessionHasEnded,
         scheduledTime,
         notificationDetails,
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
@@ -184,29 +179,12 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
       Timer(duration, () async {
         await flutterLocalNotificationsPlugin.show(
           0,
-          'My Time Schedule',
-          'Your session has ended.',
+          l10n.appName,
+          l10n.yourSessionHasEnded,
           notificationDetails,
         );
       });
     }
-  }
-
-  Future<void> _zonedScheduleAlarmClockNotification() async {
-    await flutterLocalNotificationsPlugin.zonedSchedule(
-      123,
-      'scheduled alarm clock title',
-      'scheduled alarm clock body',
-      tz.TZDateTime.now(tz.local).add(const Duration(seconds: 5)),
-      const NotificationDetails(
-        android: AndroidNotificationDetails(
-          'alarm_clock_channel',
-          'Alarm Clock Channel',
-          channelDescription: 'Alarm Clock Notification',
-        ),
-      ),
-      androidScheduleMode: AndroidScheduleMode.alarmClock,
-    );
   }
 
   String _formatTime(TimeOfDay time) {
@@ -479,64 +457,6 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     await flutterLocalNotificationsPlugin.cancelAll();
   }
 
-  /*  Future<void> _showProgressNotification(Duration duration) async {
-    id++;
-    final int progressId = id;
-    const int maxProgress = 5;
-    for (int i = 0; i <= maxProgress; i++) {
-      await Future<void>.delayed(duration, () async {
-        final AndroidNotificationDetails androidNotificationDetails =
-            AndroidNotificationDetails(
-              'progress channel',
-              'progress channel',
-              channelDescription: 'progress channel description',
-              channelShowBadge: false,
-              importance: Importance.max,
-              priority: Priority.high,
-              onlyAlertOnce: true,
-              showProgress: true,
-              maxProgress: maxProgress,
-              progress: i,
-            );
-        final NotificationDetails notificationDetails = NotificationDetails(
-          android: androidNotificationDetails,
-        );
-        await flutterLocalNotificationsPlugin.show(
-          progressId,
-          'progress notification title',
-          'progress notification body',
-          notificationDetails,
-          payload: 'item x',
-        );
-      });
-    }
-  }
-
-  Future<void> _showIndeterminateProgressNotification() async {
-    const AndroidNotificationDetails androidNotificationDetails =
-        AndroidNotificationDetails(
-          'indeterminate progress channel',
-          'indeterminate progress channel',
-          channelDescription: 'indeterminate progress channel description',
-          channelShowBadge: false,
-          importance: Importance.max,
-          priority: Priority.high,
-          onlyAlertOnce: true,
-          showProgress: true,
-          indeterminate: true,
-        );
-    const NotificationDetails notificationDetails = NotificationDetails(
-      android: androidNotificationDetails,
-    );
-    await flutterLocalNotificationsPlugin.show(
-      id++,
-      'indeterminate progress notification title',
-      'indeterminate progress notification body',
-      notificationDetails,
-      payload: 'item x',
-    );
-  }
-*/
   Future<void> _checkForMidnightReset() async {
     final prefs = await SharedPreferences.getInstance();
     final lastResetDate = prefs.getString('lastResetDate');
@@ -674,86 +594,25 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
       builder:
           (_) => StatefulBuilder(
             builder: (context, setDialogState) {
-              return AlertDialog(
-                title: Text(
-                  isEditing ? 'Edit Schedule Item' : 'Add Schedule Item',
-                ),
-                content: SingleChildScrollView(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      // Start time picker
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            selectedStartTime != null
-                                ? 'Start: ${_formatTime(selectedStartTime!)}'
-                                : 'Start: (not selected)',
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          ElevatedButton(
-                            onPressed: () async {
-                              await _pickStartTime();
-                              setDialogState(() {});
-                            },
-                            child: const Text('Change'),
-                          ),
-                        ],
-                      ),
-
-                      const SizedBox(height: 20),
-
-                      // Duration selector with dial
-                      Text('Duration: $durationMinutes minutes'),
-                      const SizedBox(height: 10),
-                      SizedBox(
-                        height: 200,
-                        child: DurationDial(
-                          initialDuration: durationMinutes,
-                          onChanged: (newDuration) {
-                            setDialogState(() {
-                              durationMinutes = newDuration;
-                            });
-                          },
-                        ),
-                      ),
-
-                      // Show calculated end time if start time is selected
-                      if (selectedStartTime != null) ...[
-                        const SizedBox(height: 10),
-                        Text(
-                          'End: ${_formatTime(_addDurationToTime(selectedStartTime!, durationMinutes))}',
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ],
-
-                      const SizedBox(height: 20),
-                      TextField(
-                        controller: _activityController,
-                        decoration: const InputDecoration(
-                          labelText: 'Activity',
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    child: const Text('Cancel'),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      if (isEditing && editIndex != null) {
-                        _updateScheduleItem(editIndex);
-                      } else {
-                        _addScheduleItem();
-                      }
-                    },
-                    child: Text(isEditing ? 'Update' : 'Add'),
-                  ),
-                ],
+              return AddScheduleContentDialog(
+                isEditing: isEditing,
+                selectedStartTime: selectedStartTime,
+                durationMinutes: durationMinutes,
+                activityController: _activityController,
+                onPickTime: () async {
+                  await _pickStartTime();
+                  setDialogState(() {});
+                },
+                onDurationChanged: (val) {
+                  setDialogState(() => durationMinutes = val);
+                },
+                onSubmit: () {
+                  if (isEditing && editIndex != null) {
+                    _updateScheduleItem(editIndex);
+                  } else {
+                    _addScheduleItem();
+                  }
+                },
               );
             },
           ),
@@ -762,21 +621,38 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
-            const DrawerHeader(
-              decoration: BoxDecoration(color: Colors.blue),
-              child: Text(
-                'Menu',
-                style: TextStyle(color: Colors.white, fontSize: 24),
+            DrawerHeader(
+              decoration: const BoxDecoration(color: Colors.blue),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(
+                      12,
+                    ), // Adjust as desired
+                    child: Image.asset(
+                      'assets/icon/icon.png',
+                      height: 60,
+                      width: 60,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    l10n.menu,
+                    style: const TextStyle(color: Colors.white, fontSize: 24),
+                  ),
+                ],
               ),
             ),
             ListTile(
               leading: Icon(Icons.settings),
-              title: Text('Settings'),
+              title: Text(AppLocalizations.of(context)!.settings),
               onTap: () {
                 Navigator.pop(context); // close drawer
                 Navigator.push(
@@ -791,7 +667,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
             ),
             ListTile(
               leading: Icon(Icons.info),
-              title: Text('About'),
+              title: Text(l10n.about),
               onTap: () {
                 Navigator.pop(context);
                 _showAboutDialog(context);
@@ -799,7 +675,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
             ),
             ListTile(
               leading: Icon(Icons.help_outline),
-              title: Text('Help'),
+              title: Text(l10n.help),
               onTap: () {
                 Navigator.pop(context);
                 _showHelpDialog(context);
@@ -809,7 +685,13 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
         ),
       ),
       appBar: AppBar(
-        title: const Text('My Time Schedule'),
+        title: Row(
+          children: [
+            Image.asset('assets/icon/icon.png', height: 30),
+            const SizedBox(width: 10),
+            Text(l10n.appName),
+          ],
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.settings),
@@ -862,33 +744,44 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
   void _showAboutDialog(BuildContext context) {
     showAboutDialog(
       context: context,
-      applicationName: 'My Time Schedule',
-      applicationVersion: '1.0.0',
-      applicationLegalese: '© 2025 Bhante Subhuti',
+      applicationName: AppLocalizations.of(context)!.appName,
+      applicationVersion: AppLocalizations.of(context)!.appVersion,
+      applicationLegalese: AppLocalizations.of(context)!.appCopyright,
     );
   }
 
   void _showHelpDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder:
-          (context) => AlertDialog(
-            title: const Text('Help'),
-            content: const Text(
-              '• Schedule your entire day using focused 50-minute sessions.\n'
-              '• Be sure to insert 10-minute breaks between sessions — this is a proven method to maintain energy and concentration.\n'
-              '• Don’t forget to schedule free time! This is the most important part.\n'
-              '  By planning free time in advance, you manage it intentionally rather than losing it.\n'
-              '• Tap the clock icon to start a timer for any scheduled activity.\n'
-              '• Use the menu to access settings and customize your preferences.',
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('Close'),
-              ),
-            ],
-          ),
-    );
+    showDialog(context: context, builder: (context) => HelpDialogWidget());
   }
 }
+
+// extra code not used but kept
+/*
+  Future<void> _zonedScheduleAlarmClockNotification() async {
+    await flutterLocalNotificationsPlugin.zonedSchedule(
+      123,
+      'scheduled alarm clock title',
+      'scheduled alarm clock body',
+      tz.TZDateTime.now(tz.local).add(const Duration(seconds: 5)),
+      const NotificationDetails(
+        android: AndroidNotificationDetails(
+          'alarm_clock_channel',
+          'Alarm Clock Channel',
+          channelDescription: 'Alarm Clock Notification',
+        ),
+      ),
+      androidScheduleMode: AndroidScheduleMode.alarmClock,
+    );
+  }
+*/
+
+/*
+  Future<void> _requestNotificationPolicyAccess() async {
+    final AndroidFlutterLocalNotificationsPlugin? androidImplementation =
+        flutterLocalNotificationsPlugin
+            .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin
+            >();
+    await androidImplementation?.requestNotificationPolicyAccess();
+  }
+*/

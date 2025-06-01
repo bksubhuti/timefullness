@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:my_time_schedule/models/prefs.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SolidVisualTimer extends StatelessWidget {
   final int remaining;
@@ -14,6 +15,8 @@ class SolidVisualTimer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     final double progress = total == 0 ? 0 : remaining / total;
     final minutes = remaining ~/ 60;
     final seconds = remaining % 60;
@@ -22,7 +25,7 @@ class SolidVisualTimer extends StatelessWidget {
             ? "$minutes:${seconds.toString().padLeft(2, '0')}"
             : "$seconds s";
 
-    if (remaining == 0) timeStr = "Finished";
+    if (remaining == 0) timeStr = l10n.finished;
 
     return LayoutBuilder(
       builder: (context, constraints) {

@@ -167,8 +167,14 @@ class MyTimeScheduleApp extends StatelessWidget {
       ],
       supportedLocales: const [
         Locale('en'), // English
-        Locale('si'), // English
-        Locale('my'), // English
+        Locale('si'), // sinhala
+        Locale('my'), // myanmar
+        Locale('hi'), // hindi
+        Locale('lo'), // lao
+        Locale('th'), // thai
+        Locale('km'), // khmr
+        Locale('vi'), // vietnamese
+        Locale('zh'), // chinese
       ],
     );
   }
