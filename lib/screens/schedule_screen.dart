@@ -22,7 +22,7 @@ import '../widgets/schedule_tile.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:my_time_schedule/services/example_includes.dart';
 import 'package:timezone/timezone.dart' as tz;
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:my_time_schedule/l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 class ScheduleScreen extends StatefulWidget {

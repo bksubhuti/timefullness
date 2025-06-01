@@ -22,7 +22,7 @@ import 'package:timezone/timezone.dart' as tz;
 import 'plugin.dart';
 import 'windows.dart' as windows;
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:my_time_schedule/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'providers/locale_provider.dart';
 

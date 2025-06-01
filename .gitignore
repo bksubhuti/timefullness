@@ -33,6 +33,10 @@ migrate_working_dir/
 .pub/
 /build/
 
+# Ignore all .dart files in lib/l10n but keep .arb files
+lib/l10n/*.dart
+pubspec.lock
+
 # Symbolication related
 app.*.symbols
 

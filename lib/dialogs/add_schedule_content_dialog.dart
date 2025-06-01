@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:my_time_schedule/l10n/app_localizations.dart';
 import 'package:my_time_schedule/widgets/duration_dial.dart';
 
 class AddScheduleContentDialog extends StatelessWidget {

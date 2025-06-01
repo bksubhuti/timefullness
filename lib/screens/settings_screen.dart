@@ -5,7 +5,7 @@ import '../models/prefs.dart';
 import '../services/hive_schedule_repository.dart';
 import 'package:hive/hive.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:my_time_schedule/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import '../providers/locale_provider.dart';
 
