@@ -48,5 +48,11 @@
   "language": "Ngôn ngữ",
   "timer": "Hẹn giờ",
   "finished": "Hoàn thành",
-  "yourSessionHasEnded": "Phiên của bạn đã kết thúc."
+  "yourSessionHasEnded": "Phiên của bạn đã kết thúc.",
+  "yourSessionHasEnded": "Phiên làm việc của bạn đã kết thúc.",
+  "shouldTurnOffNotifcations": "Tắt thông báo?",
+  "shouldTurnOnNotifcations": "Bật thông báo?",
+  "thisWillStopFutureNotifications": "Điều này sẽ dừng tất cả các thông báo đã lên lịch trong tương lai. Tiếp tục?",
+  "thisWillEnableAllReminders": "Điều này sẽ bật lời nhắc cho tất cả các mục đã lên lịch trong tương lai. Tiếp tục?",
+  "ok": "Đồng ý"
 }

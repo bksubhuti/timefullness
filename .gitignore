@@ -48,6 +48,8 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
+**/my_time_schedule.AppDir
+*.AppImage
 
 #android related
 **/android/**/gradle-wrapper.jar

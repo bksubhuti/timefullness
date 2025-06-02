@@ -48,5 +48,11 @@
   "language": "ภาษา",
   "timer": "ตัวจับเวลา",
   "finished": "เสร็จสิ้น",
-  "yourSessionHasEnded": "เซสชันของคุณสิ้นสุดแล้ว"
+  "yourSessionHasEnded": "เซสชันของคุณสิ้นสุดแล้ว",
+  "yourSessionHasEnded": "เซสชันของคุณสิ้นสุดแล้ว",
+  "shouldTurnOffNotifcations": "ปิดการแจ้งเตือนหรือไม่?",
+  "shouldTurnOnNotifcations": "เปิดการแจ้งเตือนหรือไม่?",
+  "thisWillStopFutureNotifications": "สิ่งนี้จะหยุดการแจ้งเตือนทั้งหมดในอนาคต ดำเนินการต่อหรือไม่?",
+  "thisWillEnableAllReminders": "สิ่งนี้จะเปิดการแจ้งเตือนสำหรับรายการที่กำหนดไว้ล่วงหน้าทั้งหมด ดำเนินการต่อหรือไม่?",
+  "ok": "ตกลง"
 }

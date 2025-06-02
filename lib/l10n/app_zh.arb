@@ -48,5 +48,11 @@
   "language": "语言",
   "timer": "计时器",
   "finished": "已完成",
-  "yourSessionHasEnded": "您的会话已结束。"
+  "yourSessionHasEnded": "您的会话已结束。",
+  "yourSessionHasEnded": "您的会话已结束。",
+  "shouldTurnOffNotifcations": "要关闭通知吗？",
+  "shouldTurnOnNotifcations": "要开启通知吗？",
+  "thisWillStopFutureNotifications": "这将停止所有未来的计划通知。是否继续？",
+  "thisWillEnableAllReminders": "这将启用所有未来项目的提醒。是否继续？",
+  "ok": "确定"
 }

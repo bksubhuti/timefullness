@@ -48,5 +48,11 @@
   "language": "ភាសា",
   "timer": "ម៉ោងจับเวลา",
   "finished": "បញ្ចប់រួចរាល់",
-  "yourSessionHasEnded": "សម័យរបស់អ្នកបានបញ្ចប់។"
+  "yourSessionHasEnded": "សម័យរបស់អ្នកបានបញ្ចប់។",
+  "yourSessionHasEnded": "សម័យរបស់អ្នកបានបញ្ចប់រួចហើយ។",
+  "shouldTurnOffNotifcations": "ចង់បិទការជូនដំណឹងឬ?",
+  "shouldTurnOnNotifcations": "ចង់បើកការជូនដំណឹងឬ?",
+  "thisWillStopFutureNotifications": "វានឹងបញ្ឈប់ការជូនដំណឹងទាំងអស់នៅពេលអនាគត។ បន្តទេ?",
+  "thisWillEnableAllReminders": "វានឹងបើកការរំលឹកសម្រាប់ធាតុដែលបានកំណត់រួចទាំងអស់។ បន្តទេ?",
+  "ok": "យល់ព្រម"
 }

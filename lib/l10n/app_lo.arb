@@ -48,6 +48,12 @@
   "language": "ພາສາ",
   "timer": "ເວລາ",
   "finished": "ສຳເລັດແລ້ວ",
-  "yourSessionHasEnded": "ຊົ່ວໂມງຂອງທ່ານໄດ້ສິ້ນສຸດແລ້ວ."
+  "yourSessionHasEnded": "ຊົ່ວໂມງຂອງທ່ານໄດ້ສິ້ນສຸດແລ້ວ.",
+  "yourSessionHasEnded": "ການເຊັດຊັນຂອງທ່ານໄດ້ສິ້ນສຸດແລ້ວ.",
+  "shouldTurnOffNotifcations": "ປິດການແຈ້ງເຕືອນບໍ?",
+  "shouldTurnOnNotifcations": "ເປີດການແຈ້ງເຕືອນບໍ?",
+  "thisWillStopFutureNotifications": "ນີ້ຈະຢຸດການແຈ້ງເຕືອນທັງໝົດໃນອະນາຄົດ. ຈະດຳເນີນຕໍ່ບໍ?",
+  "thisWillEnableAllReminders": "ນີ້ຈະເປີດການແຈ້ງເຕືອນສຳລັບລາຍການໃນອະນາຄົດ. ຈະດຳເນີນຕໍ່ບໍ?",
+  "ok": "ຕົກລົງ"
 }
 

@@ -48,5 +48,11 @@
   "language": "භාෂාව",
   "timer": "ටයිමරය",
   "finished": "අවසන්",
-  "yourSessionHasEnded": "ඔබගේ සැසිවාරය අවසන්වියයි."
+  "yourSessionHasEnded": "ඔබගේ සැසිවාරය අවසන්වියයි.",
+  "yourSessionHasEnded": "ඔබගේ සත්‍යය අවසන්වී ඇත.",
+  "shouldTurnOffNotifcations": "දැනුම්දීම් අක්‍රිය කරන්නද?",
+  "shouldTurnOnNotifcations": "දැනුම්දීම් සක්‍රිය කරන්නද?",
+  "thisWillStopFutureNotifications": "මෙය අනාගතයේදී නියමිත සියලු දැනුම්දීම් නවත්වනු ඇත. ඉදිරියට යන්නද?",
+  "thisWillEnableAllReminders": "මෙය අනාගත නියමිත අයිතම සඳහා මතක් කිරීම සක්‍රිය කරයි. ඉදිරියට යන්නද?",
+  "ok": "හරි"  
 }

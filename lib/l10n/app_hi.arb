@@ -48,5 +48,11 @@
   "language": "भाषा",
   "timer": "टाइमर",
   "finished": "समाप्त",
-  "yourSessionHasEnded": "आपका सत्र समाप्त हो गया है।"
+  "yourSessionHasEnded": "आपका सत्र समाप्त हो गया है।",
+  "yourSessionHasEnded": "आपका सत्र समाप्त हो गया है।",
+  "shouldTurnOffNotifcations": "सूचनाएं बंद करें?",
+  "shouldTurnOnNotifcations": "सूचनाएं चालू करें?",
+  "thisWillStopFutureNotifications": "यह सभी भविष्य की अनुसूचित सूचनाओं को रोक देगा। क्या आप आगे बढ़ना चाहते हैं?",
+  "thisWillEnableAllReminders": "यह सभी भविष्य की अनुसूचित वस्तुओं के लिए रिमाइंडर सक्षम करेगा। क्या आप आगे बढ़ना चाहते हैं?",
+  "ok": "ठीक है"
 }

@@ -48,5 +48,10 @@
   "language": "Language",
   "timer": "Timer",
   "finished": "Finished",
-  "yourSessionHasEnded": "Your session has ended." 
+  "yourSessionHasEnded": "Your session has ended.",
+  "shouldTurnOffNotifcations": "Turn Off Notifications?",
+  "shouldTurnOnNotifcations": "Turn On Notifications?",
+  "thisWillStopFutureNotifications": "This will stop all future scheduled notifications. Proceed?",
+  "thisWillEnableAllReminders":  "This will enable reminders for all future scheduled items. Proceed?",
+  "ok": "OK"
 }

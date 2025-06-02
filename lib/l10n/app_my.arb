@@ -48,5 +48,11 @@
   "language": "ဘာသာစကား",
   "timer": "တိုင်းတာစက်",
   "finished": "ပြီးပါပြီ",
-  "yourSessionHasEnded": "သင်၏အကြိမ်အမှတ်တင်ပြီးဆုံးသွားပါပြီ။"
+  "yourSessionHasEnded": "သင်၏အကြိမ်အမှတ်တင်ပြီးဆုံးသွားပါပြီ။",
+  "yourSessionHasEnded": "သင့်အစည်းအဝေးပြီးဆုံးပါပြီ။",
+  "shouldTurnOffNotifcations": "အသိပေးချက်များပိတ်မလား?",
+  "shouldTurnOnNotifcations": "အသိပေးချက်များဖွင့်မလား?",
+  "thisWillStopFutureNotifications": "ဒီအရာက မျှော်မှန်းထားသော အသိပေးချက်များအားလုံးကို ရပ်ထားပါမည်။ ဆက်လုပ်မလား?",
+  "thisWillEnableAllReminders": "ဒီအရာက မျှော်မှန်းထားသော အချိန်ဇယားများအတွက် အသိပေးမှုများကို ဖွင့်ပါမည်။ ဆက်လုပ်မလား?",
+  "ok": "အိုကေ"
 }

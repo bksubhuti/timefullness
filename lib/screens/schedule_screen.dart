@@ -51,6 +51,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
 
   // eample stuff
   bool _notificationsEnabled = false;
+  bool _allNotificationsEnabled = false;
 
   @override
   void initState() {
@@ -145,6 +146,10 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     final scheduledTime = tz.TZDateTime.now(tz.local).add(duration);
     final l10n = AppLocalizations.of(context)!;
 
+    int timerNotificationId =
+        DateTime.now().millisecondsSinceEpoch; // or fixed like 9999
+    Prefs.activeTimerHash = timerNotificationId;
+
     const notificationDetails = NotificationDetails(
       android: AndroidNotificationDetails(
         'my_time_schedule_channel',
@@ -167,7 +172,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
 
     if (Platform.isAndroid || Platform.isIOS || Platform.isMacOS) {
       await flutterLocalNotificationsPlugin.zonedSchedule(
-        0,
+        timerNotificationId,
         l10n.appName,
         l10n.yourSessionHasEnded,
         scheduledTime,
@@ -178,7 +183,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
       // Fallback: simulate schedule with delayed Timer
       Timer(duration, () async {
         await flutterLocalNotificationsPlugin.show(
-          0,
+          timerNotificationId,
           l10n.appName,
           l10n.yourSessionHasEnded,
           notificationDetails,
@@ -250,18 +255,13 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
       // Skip header row
       if (csvTable.length > 1) {
         // Start from index 1 to skip header
-        // 🟢 Replace with mapped parsing from CSV header
-        final headers = csvTable.first.cast<String>(); // 🟢
-        final rows = csvTable.skip(1); // 🟢
+        final headers = csvTable.first.cast<String>();
+        final rows = csvTable.skip(1);
 
         final defaultSchedule =
             rows.map((row) {
-              // 🟢
-              final map = Map<String, dynamic>.fromIterables(
-                headers,
-                row,
-              ); // 🟢
-              return ScheduleItem.fromCsv(map); // 🟢
+              final map = Map<String, dynamic>.fromIterables(headers, row);
+              return ScheduleItem.fromCsv(map);
             }).toList();
         setState(() {
           schedule = defaultSchedule;
@@ -282,20 +282,23 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
 
     // Calculate end time based on start time and duration
     final endTime = _addDurationToTime(selectedStartTime!, durationMinutes);
+    final newItem = ScheduleItem(
+      id: UniqueKey().toString(),
+      startTime: _formatTime(selectedStartTime!),
+      endTime: _formatTime(endTime),
+      activity: _activityController.text,
+      checkedAt: DateTime.fromMillisecondsSinceEpoch(0),
+    );
 
     setState(() {
-      schedule.add(
-        ScheduleItem(
-          id: UniqueKey().toString(),
-          startTime: _formatTime(selectedStartTime!),
-          endTime: _formatTime(endTime),
-          activity: _activityController.text,
-          checkedAt: DateTime.fromMillisecondsSinceEpoch(0),
-        ),
-      );
+      schedule.add(newItem);
       _sortScheduleByTime();
     });
     _saveSchedule();
+
+    if (Prefs.allNotificationsEnabled) {
+      _scheduleNotification(newItem);
+    }
     _activityController.clear();
     selectedStartTime = null;
     Navigator.of(context).pop();
@@ -304,21 +307,33 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
   void _updateScheduleItem(int index) {
     if (selectedStartTime == null || _activityController.text.isEmpty) return;
 
-    // Calculate end time based on start time and duration
+    final oldItem = schedule[index];
     final endTime = _addDurationToTime(selectedStartTime!, durationMinutes);
 
+    final updatedItem = ScheduleItem(
+      id: oldItem.id, // keep same ID
+      startTime: _formatTime(selectedStartTime!),
+      endTime: _formatTime(endTime),
+      activity: _activityController.text,
+      done: oldItem.done,
+      checkedAt: oldItem.checkedAt,
+    );
+
+    if (Prefs.allNotificationsEnabled) {
+      flutterLocalNotificationsPlugin.cancel(oldItem.id.hashCode);
+    }
+
     setState(() {
-      schedule[index] = ScheduleItem(
-        id: schedule[index].id,
-        startTime: _formatTime(selectedStartTime!),
-        endTime: _formatTime(endTime),
-        activity: _activityController.text,
-        done: schedule[index].done,
-        checkedAt: schedule[index].checkedAt,
-      );
+      schedule[index] = updatedItem;
       _sortScheduleByTime();
     });
+
     _saveSchedule();
+
+    if (Prefs.allNotificationsEnabled) {
+      _scheduleNotification(updatedItem);
+    }
+
     _activityController.clear();
     selectedStartTime = null;
     Navigator.of(context).pop();
@@ -358,6 +373,11 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
   }
 
   void _deleteItem(int index) {
+    final item = schedule[index];
+
+    if (Prefs.allNotificationsEnabled) {
+      flutterLocalNotificationsPlugin.cancel(item.id.hashCode);
+    }
     setState(() {
       schedule.removeAt(index);
     });
@@ -424,9 +444,14 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
               (_) => TimerScreen(
                 totalSeconds: totalSeconds,
                 timerNotifier: timerNotifier,
-                onStop: () {
+                onStop: () async {
                   _stopVisualTimer();
-                  _cancelAllNotifications();
+                  if (Prefs.activeTimerHash != 0) {
+                    await flutterLocalNotificationsPlugin.cancel(
+                      Prefs.activeTimerHash!,
+                    );
+                    Prefs.activeTimerHash = 0;
+                  }
                 },
               ),
         ),
@@ -441,17 +466,12 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     _updateTimer?.cancel();
     Prefs.destinationTime = _destinationTime = null;
     WakelockPlus.disable();
-    //    await notificationService.cancelNotification(1);
-    //await _cancelNotification();
+    if (Prefs.activeTimerHash != 0) {
+      await flutterLocalNotificationsPlugin.cancel(Prefs.activeTimerHash!);
+      Prefs.activeTimerHash = 0;
+    }
+
     setState(() => _timerVisible = false);
-  }
-
-  Future<void> _cancelNotification() async {
-    await flutterLocalNotificationsPlugin.cancel(--id);
-  }
-
-  Future<void> _cancelNotificationWithTag() async {
-    await flutterLocalNotificationsPlugin.cancel(--id, tag: 'tag');
   }
 
   Future<void> _cancelAllNotifications() async {
@@ -569,9 +589,14 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                 (_) => TimerScreen(
                   totalSeconds: _activeDuration,
                   timerNotifier: timerNotifier,
-                  onStop: () {
+                  onStop: () async {
                     _stopVisualTimer();
-                    _cancelAllNotifications();
+                    if (Prefs.activeTimerHash != 0) {
+                      await flutterLocalNotificationsPlugin.cancel(
+                        Prefs.activeTimerHash!,
+                      );
+                      Prefs.activeTimerHash = 0;
+                    }
                   },
                 ),
           ),
@@ -690,7 +715,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
           children: [
             Image.asset('assets/icon/icon.png', height: 30),
             const SizedBox(width: 10),
-            Text(l10n.appName),
+            Text(l10n.appName, style: TextStyle(fontSize: 20)),
           ],
         ),
         actions: [
@@ -712,9 +737,20 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
       ),
       body: Column(
         children: [
-          Text(
-            "${Prefs.currentScheduleId} Schedule: ",
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 30),
+            child: Row(
+              children: [
+                Text(
+                  "${Prefs.currentScheduleId} Schedule: ",
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                buildNotificationToggle(),
+              ],
+            ),
           ),
           const SizedBox(height: 10),
 
@@ -753,6 +789,150 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
 
   void _showHelpDialog(BuildContext context) {
     showDialog(context: context, builder: (context) => HelpDialogWidget());
+  }
+
+  Future<void> _scheduleNotification(ScheduleItem item) async {
+    try {
+      final format = DateFormat('h:mm a', 'en_US');
+      final now = DateTime.now();
+      final parsed = format.parseStrict(_cleanTime(item.startTime));
+      final when = DateTime(
+        now.year,
+        now.month,
+        now.day,
+        parsed.hour,
+        parsed.minute,
+      );
+
+      if (when.isBefore(now)) {
+        debugPrint('⏩ Skipped scheduling for past time: ${item.startTime}');
+        return;
+      }
+
+      final tzWhen = tz.TZDateTime.from(when, tz.local);
+
+      await flutterLocalNotificationsPlugin.zonedSchedule(
+        item.id.hashCode,
+        'Scheduled: ${item.activity}',
+        'Starts at ${item.startTime}',
+        tzWhen,
+        const NotificationDetails(
+          android: AndroidNotificationDetails(
+            'schedule_channel',
+            'Scheduled Items',
+            channelDescription: 'Reminders for scheduled tasks',
+            playSound: true, // ✅ use default system sound
+            importance: Importance.max,
+            priority: Priority.high,
+          ),
+          iOS: DarwinNotificationDetails(
+            presentAlert: true,
+            presentBadge: true,
+            presentSound: true, // ✅ system sound
+          ),
+          macOS: DarwinNotificationDetails(
+            presentAlert: true,
+            presentSound: true, // ✅ system sound
+          ),
+        ),
+        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      );
+    } catch (e) {
+      debugPrint('❌ Failed to schedule notification for ${item.activity}: $e');
+    }
+  }
+
+  Widget buildNotificationToggle() {
+    final l10n = AppLocalizations.of(context)!;
+
+    return Tooltip(
+      message:
+          _allNotificationsEnabled
+              ? l10n.shouldTurnOffNotifcations
+              : l10n.shouldTurnOnNotifcations,
+      child: IconButton(
+        icon: Icon(
+          _allNotificationsEnabled
+              ? Icons.notifications_active
+              : Icons.notifications_off,
+        ),
+        onPressed: () async {
+          final shouldProceed = await showDialog<bool>(
+            context: context,
+            builder:
+                (_) => AlertDialog(
+                  title: Text(
+                    _allNotificationsEnabled
+                        ? l10n.shouldTurnOffNotifcations
+                        : l10n.shouldTurnOnNotifcations,
+                  ),
+                  content: Text(
+                    _allNotificationsEnabled
+                        ? l10n.thisWillStopFutureNotifications
+                        : l10n.thisWillEnableAllReminders,
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context, false),
+                      child: Text(l10n.cancel),
+                    ),
+                    ElevatedButton(
+                      onPressed: () => Navigator.pop(context, true),
+                      child: Text(l10n.ok),
+                    ),
+                  ],
+                ),
+          );
+
+          if (shouldProceed != true) return;
+
+          setState(() {
+            _allNotificationsEnabled = !_allNotificationsEnabled;
+            Prefs.allNotificationsEnabled = _allNotificationsEnabled;
+          });
+
+          if (_allNotificationsEnabled) {
+            final schedule = await scheduleRepo.loadSchedule(
+              Prefs.currentScheduleId,
+            );
+            final now = DateTime.now();
+            final format = DateFormat('h:mm a', 'en_US');
+
+            for (final item in schedule) {
+              try {
+                final startTime = format.parseStrict(
+                  _cleanTime(item.startTime),
+                );
+                final fullStartTime = DateTime(
+                  now.year,
+                  now.month,
+                  now.day,
+                  startTime.hour,
+                  startTime.minute,
+                );
+
+                if (fullStartTime.isAfter(now)) {
+                  await _scheduleNotification(item);
+                }
+              } catch (e) {
+                debugPrint(
+                  '❌ Failed to parse startTime for "${item.activity}": $e',
+                );
+              }
+            }
+          } else {
+            await _cancelScheduledNotificationsOnly();
+          }
+        },
+      ),
+    );
+  }
+
+  Future<void> _cancelScheduledNotificationsOnly() async {
+    final schedule = await scheduleRepo.loadSchedule(Prefs.currentScheduleId);
+    for (var item in schedule) {
+      await flutterLocalNotificationsPlugin.cancel(item.id.hashCode);
+    }
   }
 }
 

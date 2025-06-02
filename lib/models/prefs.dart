@@ -11,6 +11,8 @@ const String remainingSecondsPref = 'remainingSeconds';
 const String timerPausedPref = 'timerPaused';
 const String shouldPlaySoundOnCheckPref = 'shouldPlaySoundOnCheck';
 const String activeTimerNamePref = 'activeTimerName';
+const String allNotficationsEnabledPref = 'allNotificationsEnabled';
+const String activeTimerHashPref = 'activeTimerHash';
 
 const int defaultTimerColor = 0xFF2196F3; // Blue
 
@@ -84,4 +86,13 @@ class Prefs {
       instance.getString(activeTimerNamePref) ?? "not set";
   static set activeTimerName(String value) =>
       instance.setString(activeTimerNamePref, value);
+
+  static bool get allNotificationsEnabled =>
+      instance.getBool(allNotficationsEnabledPref) ?? false;
+  static set allNotificationsEnabled(bool value) =>
+      instance.setBool(allNotficationsEnabledPref, value);
+
+  static int get activeTimerHash => instance.getInt(activeTimerHashPref) ?? 0;
+  static set activeTimerHash(int value) =>
+      instance.setInt(activeTimerHashPref, value);
 }
