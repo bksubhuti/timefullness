@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_time_schedule/models/prefs.dart';
 import 'package:my_time_schedule/widgets/solid_visual_timer.dart';
 import 'package:my_time_schedule/l10n/app_localizations.dart';
 
@@ -29,6 +30,14 @@ class TimerScreen extends StatelessWidget {
         body: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 30),
+              child: Text(
+                Prefs.activeTimerName,
+                style: TextStyle(color: Colors.white, fontSize: 20),
+              ),
+            ),
+            const SizedBox(height: 20),
             ValueListenableBuilder<int>(
               valueListenable: timerNotifier,
               builder: (_, remaining, __) {

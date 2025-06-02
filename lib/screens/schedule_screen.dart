@@ -396,6 +396,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
       _remainingSeconds = totalSeconds;
       Prefs.activeTimerDuration = totalSeconds;
       timerNotifier.value = totalSeconds;
+      Prefs.activeTimerName = item.activity;
 
       WakelockPlus.enable();
 
