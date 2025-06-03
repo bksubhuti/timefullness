@@ -15,7 +15,6 @@ import 'package:my_time_schedule/models/prefs.dart';
 import 'package:my_time_schedule/plugin.dart';
 import 'package:my_time_schedule/screens/settings_screen.dart';
 import 'package:my_time_schedule/services/hive_schedule_repository.dart';
-import 'package:my_time_schedule/widgets/duration_dial.dart';
 import 'package:my_time_schedule/dialogs/add_schedule_content_dialog.dart';
 import '../models/schedule_item.dart';
 import '../widgets/schedule_tile.dart';
@@ -23,7 +22,6 @@ import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:my_time_schedule/services/example_includes.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:my_time_schedule/l10n/app_localizations.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 
 class ScheduleScreen extends StatefulWidget {
   const ScheduleScreen({super.key});
@@ -145,10 +143,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
   Future<void> _zonedScheduleNotification(Duration duration) async {
     final scheduledTime = tz.TZDateTime.now(tz.local).add(duration);
     final l10n = AppLocalizations.of(context)!;
-
-    int timerNotificationId =
-        DateTime.now().millisecondsSinceEpoch; // or fixed like 9999
-    Prefs.activeTimerHash = timerNotificationId;
+    Prefs.activeTimerHash = 1;
 
     const notificationDetails = NotificationDetails(
       android: AndroidNotificationDetails(
@@ -172,7 +167,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
 
     if (Platform.isAndroid || Platform.isIOS || Platform.isMacOS) {
       await flutterLocalNotificationsPlugin.zonedSchedule(
-        timerNotificationId,
+        Prefs.activeTimerHash,
         l10n.appName,
         l10n.yourSessionHasEnded,
         scheduledTime,
@@ -183,7 +178,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
       // Fallback: simulate schedule with delayed Timer
       Timer(duration, () async {
         await flutterLocalNotificationsPlugin.show(
-          timerNotificationId,
+          Prefs.activeTimerHash,
           l10n.appName,
           l10n.yourSessionHasEnded,
           notificationDetails,
@@ -445,10 +440,10 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                 totalSeconds: totalSeconds,
                 timerNotifier: timerNotifier,
                 onStop: () async {
-                  _stopVisualTimer();
+                  _stopVisualTimer(early: true);
                   if (Prefs.activeTimerHash != 0) {
                     await flutterLocalNotificationsPlugin.cancel(
-                      Prefs.activeTimerHash!,
+                      Prefs.activeTimerHash,
                     );
                     Prefs.activeTimerHash = 0;
                   }
@@ -462,12 +457,13 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     }
   }
 
-  void _stopVisualTimer() async {
+  void _stopVisualTimer({bool early = false}) async {
     _updateTimer?.cancel();
     Prefs.destinationTime = _destinationTime = null;
     WakelockPlus.disable();
-    if (Prefs.activeTimerHash != 0) {
-      await flutterLocalNotificationsPlugin.cancel(Prefs.activeTimerHash!);
+
+    if (early && Prefs.activeTimerHash != 0) {
+      await flutterLocalNotificationsPlugin.cancel(Prefs.activeTimerHash);
       Prefs.activeTimerHash = 0;
     }
 
@@ -590,10 +586,10 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                   totalSeconds: _activeDuration,
                   timerNotifier: timerNotifier,
                   onStop: () async {
-                    _stopVisualTimer();
+                    _stopVisualTimer(early: true);
                     if (Prefs.activeTimerHash != 0) {
                       await flutterLocalNotificationsPlugin.cancel(
-                        Prefs.activeTimerHash!,
+                        Prefs.activeTimerHash,
                       );
                       Prefs.activeTimerHash = 0;
                     }
@@ -855,6 +851,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
           _allNotificationsEnabled
               ? Icons.notifications_active
               : Icons.notifications_off,
+          color: _allNotificationsEnabled ? Color(Prefs.timerColor) : null,
         ),
         onPressed: () async {
           final shouldProceed = await showDialog<bool>(
