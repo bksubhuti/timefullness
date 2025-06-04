@@ -1,6 +1,12 @@
 // settings_screen.dart
+import 'dart:io';
+
+import 'package:android_intent_plus/android_intent.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:my_time_schedule/constants.dart';
 import 'package:my_time_schedule/models/schedule_item.dart';
+import 'package:my_time_schedule/plugin.dart';
 import '../models/prefs.dart';
 import '../services/hive_schedule_repository.dart';
 import 'package:hive/hive.dart';
@@ -195,6 +201,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
               });
             },
           ),
+          SizedBox(height: 10),
+          if (Platform.isAndroid || true)
+            SwitchListTile(
+              title: const Text('Timer Bypass DND'),
+              subtitle: const Text(
+                'Allow timer notification sounds even in DND mode',
+              ),
+              value: Prefs.timerBypassDnd,
+              onChanged: (val) async {
+                setState(() {
+                  Prefs.timerBypassDnd = val;
+                });
+                if (Prefs.timerBypassDnd) {
+                  await _createNotificationChannelWithDndBypass(context);
+                }
+              },
+            ),
+
           const Divider(height: 40),
         ],
       ),
@@ -378,5 +402,96 @@ class _SettingsScreenState extends State<SettingsScreen> {
     setState(() {
       _selectedScheduleId = newSelectedId;
     });
+  }
+
+  Future<void> _createNotificationChannelWithDndBypass(
+    BuildContext context,
+  ) async {
+    const AndroidNotificationChannel androidNotificationChannel =
+        AndroidNotificationChannel(
+          kDndBypassTimerChannelId,
+          kDndBypassTimerChannelName,
+          description: kDndBypassTimerChannelDescription,
+          bypassDnd: true,
+          sound: RawResourceAndroidNotificationSound('bell'),
+          playSound: true,
+          importance: Importance.max,
+        );
+
+    final AndroidFlutterLocalNotificationsPlugin? androidPlugin =
+        flutterLocalNotificationsPlugin
+            .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin
+            >();
+
+    // Check if DND access is already granted
+    final bool? hasPolicyAccess =
+        await androidPlugin?.hasNotificationPolicyAccess();
+
+    if (hasPolicyAccess ?? false) {
+      await androidPlugin?.createNotificationChannel(
+        androidNotificationChannel,
+      );
+      return;
+    }
+
+    final shouldOpenSettings = await showDialog<bool>(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Enable Do Not Disturb Bypass'),
+            content: const Text(
+              'To let timer sounds play in Do Not Disturb mode, you need to grant access. '
+              'Tap "Grant Access" for "My Time Schedule" and then return here and press Continue.',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: const Text('Grant Access'),
+              ),
+            ],
+          ),
+    );
+
+    if (shouldOpenSettings == true) {
+      final intent = AndroidIntent(
+        action: 'android.settings.NOTIFICATION_POLICY_ACCESS_SETTINGS',
+      );
+      await intent.launch();
+
+      // ✅ Show "Continue" dialog
+      showDialog<void>(
+        context: context,
+        builder:
+            (context) => AlertDialog(
+              title: const Text('Finish Setup'),
+              content: const Text('After granting permission, press Continue.'),
+              actions: [
+                TextButton(
+                  onPressed: () async {
+                    Navigator.of(context).pop(); // close dialog
+                    final newAccess =
+                        await androidPlugin?.hasNotificationPolicyAccess();
+                    if (newAccess ?? false) {
+                      await androidPlugin?.createNotificationChannel(
+                        androidNotificationChannel,
+                      );
+                      debugPrint(
+                        "DND bypass channel created after user clicked Continue.",
+                      );
+                    } else {
+                      debugPrint("Still no DND access.");
+                    }
+                  },
+                  child: const Text('Continue'),
+                ),
+              ],
+            ),
+      );
+    }
   }
 }

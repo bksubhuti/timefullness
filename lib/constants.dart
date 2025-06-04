@@ -1,5 +1,11 @@
 // Notification channel IDs and names
-const String kTimerChannelId = 'my_time_schedule_channel';
+const String kDndBypassTimerChannelId =
+    'my_time_schedule_channel_timer_dnd_bypass';
+const String kDndBypassTimerChannelName = 'My Time Schedule Timer (DND bypass)';
+const String kDndBypassTimerChannelDescription =
+    'Notifications for your My Time Schedule timer sessions.  This will bypass DND';
+
+const String kTimerChannelId = 'my_time_schedule_channel_timer';
 const String kTimerChannelName = 'My Time Schedule Timer';
 const String kTimerChannelDescription =
     'Notifications for your My Time Schedule timer sessions.';

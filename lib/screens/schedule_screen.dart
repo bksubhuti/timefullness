@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:my_time_schedule/constants.dart';
 import 'package:my_time_schedule/dialogs/help_dialog.dart';
 import 'package:my_time_schedule/screens/timer_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -119,16 +120,39 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     final l10n = AppLocalizations.of(context)!;
     Prefs.activeTimerHash = 1;
 
+    //////////////////////////////////////////////////////////
+    // create android specific dnd bypass
+    const notificationDndBypassDetails = NotificationDetails(
+      android: AndroidNotificationDetails(
+        kDndBypassTimerChannelId,
+        kDndBypassTimerChannelName,
+        channelDescription: kDndBypassTimerChannelDescription,
+        sound: RawResourceAndroidNotificationSound('bell'),
+        playSound: true,
+        enableVibration: true,
+        importance: Importance.max,
+        priority: Priority.max,
+        channelBypassDnd: true,
+      ),
+      iOS: DarwinNotificationDetails(
+        presentAlert: true,
+        presentBadge: true,
+        presentSound: true,
+        sound: 'bell.aiff', // Ensure it's included in iOS assets
+      ),
+      macOS: DarwinNotificationDetails(sound: 'bell.aiff'),
+    );
+    ///////////////////////////////////////////////////////////////
+
     const notificationDetails = NotificationDetails(
       android: AndroidNotificationDetails(
-        'my_time_schedule_channel',
-        'My Time Schedule Timer',
-        channelDescription:
-            'Notifications for your My Time Schedule timer sessions.',
+        kTimerChannelId,
+        kTimerChannelName,
+        channelDescription: kTimerChannelDescription,
         sound: RawResourceAndroidNotificationSound('bell'),
         playSound: true,
         importance: Importance.max,
-        priority: Priority.high,
+        priority: Priority.max,
       ),
       iOS: DarwinNotificationDetails(
         presentAlert: true,
@@ -145,7 +169,9 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
         l10n.appName,
         l10n.yourSessionHasEnded,
         scheduledTime,
-        notificationDetails,
+        (Platform.isAndroid && Prefs.timerBypassDnd)
+            ? notificationDndBypassDetails
+            : notificationDetails, // bypass if switch
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
       );
     } else if (Platform.isLinux || Platform.isWindows) {
@@ -726,6 +752,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
 
           Expanded(
             child: ListView.builder(
+              padding: const EdgeInsets.only(bottom: 80),
               itemCount: schedule.length,
               itemBuilder: (context, index) {
                 final item = schedule[index];
