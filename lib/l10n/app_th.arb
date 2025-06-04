@@ -54,5 +54,21 @@
   "shouldTurnOnNotifcations": "เปิดการแจ้งเตือนหรือไม่?",
   "thisWillStopFutureNotifications": "สิ่งนี้จะหยุดการแจ้งเตือนทั้งหมดในอนาคต ดำเนินการต่อหรือไม่?",
   "thisWillEnableAllReminders": "สิ่งนี้จะเปิดการแจ้งเตือนสำหรับรายการที่กำหนดไว้ล่วงหน้าทั้งหมด ดำเนินการต่อหรือไม่?",
-  "ok": "ตกลง"
+  "ok": "ตกลง",
+  "timerBypassDndTitle": "ตัวจับเวลาไม่รบกวน",
+  "timerBypassDndSubtitle": "อนุญาตเสียงการแจ้งเตือนของตัวจับเวลาแม้อยู่ในโหมด DND",
+  "scheduleAlreadyExists": "กำหนดการ \"{name}\" มีอยู่แล้ว",
+  "renameScheduleTitle": "เปลี่ยนชื่อตารางเวลา",
+  "newScheduleNameHint": "ชื่อกำหนดการใหม่",
+  "newScheduleAlreadyExists": "กำหนดการ \"{newName}\" มีอยู่แล้ว",
+  "deleteScheduleTitle": "ลบกำหนดการ?",
+  "deleteScheduleConfirmation": "คุณแน่ใจหรือไม่ว่าต้องการลบ \"{_selectedScheduleId}\"?",
+  "enableDndBypassTitle": "เปิดใช้งานการข้ามโหมดห้ามรบกวน",
+  "enableDndBypassMessage": "เพื่อให้เสียงการจับเวลาเล่นได้ในโหมด DND กรุณาแตะ 'Grant Access' แล้วกลับมากด 'Continue'",
+  "cancel": "ยกเลิก",
+  "grantAccess": "ให้สิทธิ์การเข้าถึง",
+  "finishSetupTitle": "เสร็จสิ้นการตั้งค่า",
+  "finishSetupMessage": "หลังจากอนุญาตแล้วให้กด 'ดำเนินการต่อ'",
+  "continueLabel": "ดำเนินการต่อ",
+  "meditation": "สมาธิ"
 }

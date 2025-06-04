@@ -54,5 +54,21 @@
   "shouldTurnOnNotifcations": "အသိပေးချက်များဖွင့်မလား?",
   "thisWillStopFutureNotifications": "ဒီအရာက မျှော်မှန်းထားသော အသိပေးချက်များအားလုံးကို ရပ်ထားပါမည်။ ဆက်လုပ်မလား?",
   "thisWillEnableAllReminders": "ဒီအရာက မျှော်မှန်းထားသော အချိန်ဇယားများအတွက် အသိပေးမှုများကို ဖွင့်ပါမည်။ ဆက်လုပ်မလား?",
-  "ok": "အိုကေ"
+  "ok": "အိုကေ",
+  "timerBypassDndTitle": "အချိန်ဇယား DND ကျော်ခြင်း",
+  "timerBypassDndSubtitle": "DND မုဒ်တွင် တိုင်မာ အသိပေးသံများ ပြသရန် ခွင့်ပြုပါ",
+  "scheduleAlreadyExists": "အချိန်ဇယား \"{name}\" ရှိပြီးသားဖြစ်သည်",
+  "renameScheduleTitle": "အချိန်ဇယားအမည်ပြောင်းပါ",
+  "newScheduleNameHint": "အချိန်ဇယားအမည်အသစ်",
+  "newScheduleAlreadyExists": "အချိန်ဇယား \"{newName}\" ရှိပြီးသားဖြစ်သည်",
+  "deleteScheduleTitle": "အချိန်ဇယားကိုဖျက်မလား?",
+  "deleteScheduleConfirmation": "သင် \"{_selectedScheduleId}\" ကိုဖျက်ချင်တာသေချာလား?",
+  "enableDndBypassTitle": "DND ကျော်ခြင်းကိုဖွင့်ပါ",
+  "enableDndBypassMessage": "DND မုဒ်တွင် တိုင်မာ အသံများထုတ်ရန် 'Grant Access' ကိုနှိပ်ပြီး 'Continue' ကိုနောက်တစ်ကြိမ်နှိပ်ပါ။",
+  "cancel": "ဖျက်သိမ်းပါ",
+  "grantAccess": "ခွင့်ပြုပါ",
+  "finishSetupTitle": "ဆက်တပ်ခြင်းကိုပြီးမြောက်ပါ",
+  "finishSetupMessage": "ခွင့်ပြုပြီးနောက် 'Continue' ကိုနှိပ်ပါ",
+  "continueLabel": "ဆက်လက်လုပ်ဆောင်ပါ",
+  "meditation": "အာရုံစူးစိုက်ခြင်း"
 }

@@ -204,9 +204,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
           SizedBox(height: 10),
           if (Platform.isAndroid || true)
             SwitchListTile(
-              title: const Text('Timer Bypass DND'),
-              subtitle: const Text(
-                'Allow timer notification sounds even in DND mode',
+              title: Text(AppLocalizations.of(context)!.timerBypassDndTitle),
+              subtitle: Text(
+                AppLocalizations.of(context)!.timerBypassDndSubtitle,
               ),
               value: Prefs.timerBypassDnd,
               onChanged: (val) async {
@@ -257,7 +257,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final existing = await scheduleRepo.loadSchedule(name);
     if (existing.isNotEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Schedule "$name" already exists')),
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context)!.scheduleAlreadyExists(name),
+          ),
+        ),
       );
       return;
     }
@@ -268,7 +272,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         id: UniqueKey().toString(),
         startTime: '6:00 AM',
         endTime: '7:00 AM',
-        activity: 'Meditation',
+        activity: AppLocalizations.of(context)!.meditation,
       ),
     ]);
 
@@ -301,10 +305,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
       context: context,
       builder:
           (context) => AlertDialog(
-            title: const Text('Rename Schedule'),
+            title: Text(AppLocalizations.of(context)!.renameScheduleTitle),
             content: TextField(
               controller: controller,
-              decoration: const InputDecoration(hintText: 'New schedule name'),
+              decoration: InputDecoration(
+                hintText: AppLocalizations.of(context)!.newScheduleNameHint,
+              ),
             ),
             actions: [
               TextButton(
@@ -325,7 +331,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final existing = await scheduleRepo.loadSchedule(newName);
     if (existing.isNotEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Schedule "$newName" already exists')),
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context)!.newScheduleAlreadyExists(newName),
+          ),
+        ),
       );
       return;
     }
@@ -364,9 +374,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
       context: context,
       builder:
           (context) => AlertDialog(
-            title: const Text('Delete Schedule?'),
+            title: Text(AppLocalizations.of(context)!.deleteScheduleTitle),
             content: Text(
-              'Are you sure you want to delete "$_selectedScheduleId"?',
+              AppLocalizations.of(
+                context,
+              )!.deleteScheduleConfirmation(_selectedScheduleId),
             ),
             actions: [
               TextButton(
@@ -439,19 +451,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
       context: context,
       builder:
           (context) => AlertDialog(
-            title: const Text('Enable Do Not Disturb Bypass'),
-            content: const Text(
-              'To let timer sounds play in Do Not Disturb mode, you need to grant access. '
-              'Tap "Grant Access" for "My Time Schedule" and then return here and press Continue.',
-            ),
+            title: Text(AppLocalizations.of(context)!.enableDndBypassTitle),
+            content: Text(AppLocalizations.of(context)!.enableDndBypassMessage),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(context).pop(false),
-                child: const Text('Cancel'),
+                child: Text(AppLocalizations.of(context)!.cancel),
               ),
               TextButton(
                 onPressed: () => Navigator.of(context).pop(true),
-                child: const Text('Grant Access'),
+                child: Text(AppLocalizations.of(context)!.grantAccess),
               ),
             ],
           ),
@@ -468,8 +477,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
         context: context,
         builder:
             (context) => AlertDialog(
-              title: const Text('Finish Setup'),
-              content: const Text('After granting permission, press Continue.'),
+              title: Text(AppLocalizations.of(context)!.finishSetupTitle),
+              content: Text(AppLocalizations.of(context)!.finishSetupMessage),
               actions: [
                 TextButton(
                   onPressed: () async {
@@ -487,7 +496,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       debugPrint("Still no DND access.");
                     }
                   },
-                  child: const Text('Continue'),
+                  child: Text(AppLocalizations.of(context)!.continueLabel),
                 ),
               ],
             ),

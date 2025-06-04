@@ -53,5 +53,21 @@
   "shouldTurnOnNotifcations": "Turn On Notifications?",
   "thisWillStopFutureNotifications": "This will stop all future scheduled notifications. Proceed?",
   "thisWillEnableAllReminders":  "This will enable reminders for all future scheduled items. Proceed?",
-  "ok": "OK"
+  "ok": "OK",
+  "timerBypassDndTitle": "Timer Bypass DND",
+  "timerBypassDndSubtitle": "Allow timer notification sounds even in DND mode",
+  "scheduleAlreadyExists": "Schedule \"{name}\" already exists",
+  "renameScheduleTitle": "Rename Schedule",
+  "newScheduleNameHint": "New schedule name",
+  "newScheduleAlreadyExists": "Schedule \"{newName}\" already exists",
+  "deleteScheduleTitle": "Delete Schedule?",
+  "deleteScheduleConfirmation": "Are you sure you want to delete \"{_selectedScheduleId}\"?",
+  "enableDndBypassTitle": "Enable Do Not Disturb Bypass",
+  "enableDndBypassMessage": "To let timer sounds play in Do Not Disturb mode, you need to grant access. Tap \"Grant Access\" for \"My Time Schedule\" and then return here and press Continue.",
+  "cancel": "Cancel",
+  "grantAccess": "Grant Access",
+  "finishSetupTitle": "Finish Setup",
+  "finishSetupMessage": "After granting permission, press Continue.",
+  "continueLabel": "Continue",
+  "meditation": "Meditation"
 }

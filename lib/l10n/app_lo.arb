@@ -54,6 +54,22 @@
   "shouldTurnOnNotifcations": "ເປີດການແຈ້ງເຕືອນບໍ?",
   "thisWillStopFutureNotifications": "ນີ້ຈະຢຸດການແຈ້ງເຕືອນທັງໝົດໃນອະນາຄົດ. ຈະດຳເນີນຕໍ່ບໍ?",
   "thisWillEnableAllReminders": "ນີ້ຈະເປີດການແຈ້ງເຕືອນສຳລັບລາຍການໃນອະນາຄົດ. ຈະດຳເນີນຕໍ່ບໍ?",
-  "ok": "ຕົກລົງ"
+  "ok": "ຕົກລົງ",
+  "timerBypassDndTitle": "ເວລາໄທເມີທີ່ລະເບີດ DND",
+  "timerBypassDndSubtitle": "ອະນຸຍາດໃຫ້ສຽງແຈ້ງເຕືອນເວລາໄທເມີໃນໂໝດ DND",
+  "scheduleAlreadyExists": "ຕາຕະລາງ \"{name}\" ມີຢູ່ແລ້ວ",
+  "renameScheduleTitle": "ປ່ຽນຊື່ຕາຕະລາງ",
+  "newScheduleNameHint": "ຊື່ຕາຕະລາງໃໝ່",
+  "newScheduleAlreadyExists": "ຕາຕະລາງ \"{newName}\" ມີຢູ່ແລ້ວ",
+  "deleteScheduleTitle": "ລຶບຕາຕະລາງ?",
+  "deleteScheduleConfirmation": "ທ່ານແນ່ໃຈບໍ່ວ່າຈະລຶບ \"{_selectedScheduleId}\"?",
+  "enableDndBypassTitle": "ເປີດໃຊ້ການລະເບີດ DND",
+  "enableDndBypassMessage": "ເພື່ອໃຫ້ສຽງແຈ້ງເຕືອນເວລາໄທເມີໃນໂໝດ DND ໃຫ້ໄປທີ່ 'Grant Access' ແລ້ວກັບຄືນມາແລະກົດ 'Continue'",
+  "cancel": "ຍົກເລີກ",
+  "grantAccess": "ອະນຸຍາດໃຫ້",
+  "finishSetupTitle": "ສິ້ນສຸດການຕິດຕັ້ງ",
+  "finishSetupMessage": "ຫຼັງຈາກໄດ້ອະນຸຍາດແລ້ວ, ກົດປຸ່ມດຳເນີນການຕໍ່",
+  "continueLabel": "ດຳເນີນຕໍ່",
+  "meditation": "ສະຫງົບໃຈ"  
 }
 

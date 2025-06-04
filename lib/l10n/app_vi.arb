@@ -54,5 +54,21 @@
   "shouldTurnOnNotifcations": "Bật thông báo?",
   "thisWillStopFutureNotifications": "Điều này sẽ dừng tất cả các thông báo đã lên lịch trong tương lai. Tiếp tục?",
   "thisWillEnableAllReminders": "Điều này sẽ bật lời nhắc cho tất cả các mục đã lên lịch trong tương lai. Tiếp tục?",
-  "ok": "Đồng ý"
+  "ok": "Đồng ý",
+  "timerBypassDndTitle": "Bỏ qua chế độ Không làm phiền cho hẹn giờ",
+  "timerBypassDndSubtitle": "Cho phép âm thanh thông báo hẹn giờ ngay cả khi ở chế độ DND",
+  "scheduleAlreadyExists": "Lịch trình \"{name}\" đã tồn tại",
+  "renameScheduleTitle": "Đổi tên lịch trình",
+  "newScheduleNameHint": "Tên lịch trình mới",
+  "newScheduleAlreadyExists": "Lịch trình \"{newName}\" đã tồn tại",
+  "deleteScheduleTitle": "Xóa lịch trình?",
+  "deleteScheduleConfirmation": "Bạn có chắc chắn muốn xóa \"{_selectedScheduleId}\" không?",
+  "enableDndBypassTitle": "Bật bỏ qua chế độ Không làm phiền",
+  "enableDndBypassMessage": "Để âm thanh hẹn giờ hoạt động trong chế độ DND, hãy nhấn 'Grant Access' và sau đó quay lại nhấn 'Continue'.",
+  "cancel": "Hủy",
+  "grantAccess": "Cấp quyền",
+  "finishSetupTitle": "Hoàn tất cài đặt",
+  "finishSetupMessage": "Sau khi cấp quyền, hãy nhấn 'Tiếp tục'",
+  "continueLabel": "Tiếp tục",
+  "meditation": "Thiền"
 }

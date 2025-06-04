@@ -54,5 +54,21 @@
   "shouldTurnOnNotifcations": "要开启通知吗？",
   "thisWillStopFutureNotifications": "这将停止所有未来的计划通知。是否继续？",
   "thisWillEnableAllReminders": "这将启用所有未来项目的提醒。是否继续？",
-  "ok": "确定"
+  "ok": "确定",
+  "timerBypassDndTitle": "定时器绕过勿扰模式",
+  "timerBypassDndSubtitle": "即使在勿扰模式下也允许定时器通知声音",
+  "scheduleAlreadyExists": "计划 \"{name}\" 已存在",
+  "renameScheduleTitle": "重命名计划",
+  "newScheduleNameHint": "新计划名称",
+  "newScheduleAlreadyExists": "计划 \"{newName}\" 已存在",
+  "deleteScheduleTitle": "删除计划？",
+  "deleteScheduleConfirmation": "您确定要删除 \"{_selectedScheduleId}\" 吗？",
+  "enableDndBypassTitle": "启用勿扰模式绕过",
+  "enableDndBypassMessage": "要在勿扰模式中播放定时器声音，请点击“授权访问”，然后返回并点击“继续”。",
+  "cancel": "取消",
+  "grantAccess": "授予访问权限",
+  "finishSetupTitle": "完成设置",
+  "finishSetupMessage": "授权后点击“继续”",
+  "continueLabel": "继续",
+  "meditation": "冥想"
 }

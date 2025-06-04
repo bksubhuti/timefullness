@@ -54,5 +54,21 @@
   "shouldTurnOnNotifcations": "දැනුම්දීම් සක්‍රිය කරන්නද?",
   "thisWillStopFutureNotifications": "මෙය අනාගතයේදී නියමිත සියලු දැනුම්දීම් නවත්වනු ඇත. ඉදිරියට යන්නද?",
   "thisWillEnableAllReminders": "මෙය අනාගත නියමිත අයිතම සඳහා මතක් කිරීම සක්‍රිය කරයි. ඉදිරියට යන්නද?",
-  "ok": "හරි"  
+  "ok": "හරි",
+  "timerBypassDndTitle": "ටයිමර් DND මඟහරින්න",
+  "timerBypassDndSubtitle": "DND ප්‍රකාරයේදීත් ටයිමර් දැනුම්දීමේ ශබ්ද අවසර දෙන්න",
+  "scheduleAlreadyExists": "\"{name}\" කාලසටහන දැනටමත් ඇත",
+  "renameScheduleTitle": "කාලසටහනට නමක් වෙනස් කරන්න",
+  "newScheduleNameHint": "නව කාලසටහන නම",
+  "newScheduleAlreadyExists": "\"{newName}\" කාලසටහන දැනටමත් ඇත",
+  "deleteScheduleTitle": "කාලසටහන මකන්නද?",
+  "deleteScheduleConfirmation": "ඔබට \"{_selectedScheduleId}\" මකන්න ඇවැසි බව විශ්වාසද?",
+  "enableDndBypassTitle": "DND මඟහරීම් සක්‍රීය කරන්න",
+  "enableDndBypassMessage": "DND තත්ත්වයේදී ටයිමර් ශබ්ද සඳහා අවසර ලබාදීමට 'Grant Access' තෝරාගෙන පසුව 'Continue' ඔබන්න.",
+  "cancel": "අවලංගු කරන්න",
+  "grantAccess": "අවසර දෙන්න",
+  "finishSetupTitle": "සැකසීම නිමා කරන්න",
+  "finishSetupMessage": "අවසර දුන් පසුව 'Continue' ඔබන්න",
+  "continueLabel": "ඉදිරියට යන්න",
+  "meditation": "සමාධිය"
 }

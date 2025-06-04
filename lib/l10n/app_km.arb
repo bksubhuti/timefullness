@@ -54,5 +54,21 @@
   "shouldTurnOnNotifcations": "ចង់បើកការជូនដំណឹងឬ?",
   "thisWillStopFutureNotifications": "វានឹងបញ្ឈប់ការជូនដំណឹងទាំងអស់នៅពេលអនាគត។ បន្តទេ?",
   "thisWillEnableAllReminders": "វានឹងបើកការរំលឹកសម្រាប់ធាតុដែលបានកំណត់រួចទាំងអស់។ បន្តទេ?",
-  "ok": "យល់ព្រម"
+  "ok": "យល់ព្រម",
+  "timerBypassDndTitle": "បញ្ជាក់ពេលវេលាដើម្បីរំលង DND",
+  "timerBypassDndSubtitle": "អនុញ្ញាតឲ្យសំឡេងជូនដំណឹងថាជាឧបករណ៍កំណត់ពេលវេលា នៅក្នុងរបៀប DND",
+  "scheduleAlreadyExists": "កាលវិភាគ \"{name}\" មានរួចហើយ",
+  "renameScheduleTitle": "ប្តូរឈ្មោះកាលវិភាគ",
+  "newScheduleNameHint": "ឈ្មោះកាលវិភាគថ្មី",
+  "newScheduleAlreadyExists": "កាលវិភាគ \"{newName}\" មានរួចហើយ",
+  "deleteScheduleTitle": "លុបកាលវិភាគ?",
+  "deleteScheduleConfirmation": "តើអ្នកប្រាកដថាចង់លុប \"{_selectedScheduleId}\" មែនទេ?",
+  "enableDndBypassTitle": "បើកការរំលង DND",
+  "enableDndBypassMessage": "ដើម្បីឲ្យសម្លេងព្រមានរបស់ថេម៉ឺបន្ដរដើរបានក្នុងរបៀប DND សូមចុច 'Grant Access' ហើយត្រឡប់មកវិញដើម្បីចុច 'Continue'",
+  "cancel": "បោះបង់",
+  "grantAccess": "ផ្តល់ការចូលដំណើរការ",
+  "finishSetupTitle": "បញ្ចប់ការរៀបចំ",
+  "finishSetupMessage": "បន្ទាប់ពីអនុញ្ញាត សូមចុចបន្ត",
+  "continueLabel": "បន្ត",
+  "meditation": "ធ្វើសមាធិ"
 }

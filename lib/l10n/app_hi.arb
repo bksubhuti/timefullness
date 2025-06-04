@@ -54,5 +54,21 @@
   "shouldTurnOnNotifcations": "सूचनाएं चालू करें?",
   "thisWillStopFutureNotifications": "यह सभी भविष्य की अनुसूचित सूचनाओं को रोक देगा। क्या आप आगे बढ़ना चाहते हैं?",
   "thisWillEnableAllReminders": "यह सभी भविष्य की अनुसूचित वस्तुओं के लिए रिमाइंडर सक्षम करेगा। क्या आप आगे बढ़ना चाहते हैं?",
-  "ok": "ठीक है"
+  "ok": "ठीक है",
+  "timerBypassDndTitle": "टाइमर डू नॉट डिस्टर्ब बाईपास",
+  "timerBypassDndSubtitle": "DND मोड में भी टाइमर नोटिफिकेशन ध्वनियों की अनुमति दें",
+  "scheduleAlreadyExists": "अनुसूची \"{name}\" पहले से मौजूद है",
+  "renameScheduleTitle": "अनुसूची का नाम बदलें",
+  "newScheduleNameHint": "नई अनुसूची का नाम",
+  "newScheduleAlreadyExists": "अनुसूची \"{newName}\" पहले से मौजूद है",
+  "deleteScheduleTitle": "अनुसूची हटाएं?",
+  "deleteScheduleConfirmation": "क्या आप वाकई \"{_selectedScheduleId}\" को हटाना चाहते हैं?",
+  "enableDndBypassTitle": "डू नॉट डिस्टर्ब बाईपास सक्षम करें",
+  "enableDndBypassMessage": "DND मोड में भी टाइमर ध्वनियों को चलाने के लिए, आपको विशेष अनुमति देनी होगी। 'Grant Access' पर टैप करें और वापस आकर 'Continue' दबाएं।",
+  "cancel": "रद्द करें",
+  "grantAccess": "अनुमति दें",
+  "finishSetupTitle": "सेटअप पूरा करें",
+  "finishSetupMessage": "अनुमति देने के बाद, जारी रखें दबाएं।",
+  "continueLabel": "जारी रखें",
+  "meditation": "ध्यान"
 }
