@@ -47,9 +47,8 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
   Timer? _updateTimer;
   final ValueNotifier<int> timerNotifier = ValueNotifier(0);
 
-  // eample stuff
   bool _notificationsEnabled = false;
-  bool _allNotificationsEnabled = false;
+  bool _allNotificationsEnabled = Prefs.allNotificationsEnabled;
 
   @override
   void initState() {
@@ -115,32 +114,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     }
   }
 
-  Future<void> _requestPermissionsWithCriticalAlert() async {
-    if (Platform.isIOS || Platform.isMacOS) {
-      await flutterLocalNotificationsPlugin
-          .resolvePlatformSpecificImplementation<
-            IOSFlutterLocalNotificationsPlugin
-          >()
-          ?.requestPermissions(
-            alert: true,
-            badge: true,
-            sound: true,
-            critical: true,
-          );
-      await flutterLocalNotificationsPlugin
-          .resolvePlatformSpecificImplementation<
-            MacOSFlutterLocalNotificationsPlugin
-          >()
-          ?.requestPermissions(
-            alert: true,
-            badge: true,
-            sound: true,
-            critical: true,
-          );
-    }
-  }
-
-  Future<void> _zonedScheduleNotification(Duration duration) async {
+  Future<void> timerNotification(Duration duration) async {
     final scheduledTime = tz.TZDateTime.now(tz.local).add(duration);
     final l10n = AppLocalizations.of(context)!;
     Prefs.activeTimerHash = 1;
@@ -335,8 +309,8 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
   }
 
   Future<void> _playBellSound({bool timer = false}) async {
-    String soundFile =
-        timer ? 'bell-meditation-75335.mp3' : 'bell-meditation-trim.mp3';
+    String soundFile = 'bell-meditation-trim.mp3';
+    //timer ? 'bell-meditation-75335.mp3' : 'bell-meditation-trim.mp3';
 
     try {
       final player = AudioPlayer(); // Create a fresh instance each time
@@ -415,7 +389,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
 
       WakelockPlus.enable();
 
-      await _zonedScheduleNotification(duration);
+      await timerNotification(duration);
 
       _updateTimer?.cancel();
       _updateTimer = Timer.periodic(const Duration(seconds: 1), (_) {
@@ -425,7 +399,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
         if (remaining <= 0) {
           timerNotifier.value = 0;
           _stopVisualTimer();
-          // _playBellSound(); // why?
+          //_playBellSound(); why
           WakelockPlus.disable();
         } else {
           timerNotifier.value = remaining;
@@ -565,7 +539,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
         timerNotifier.value = remaining;
         if (remaining <= 0) {
           _stopVisualTimer();
-          // _playBellSound(timer: true); // why?
+          //_playBellSound(timer: true); //why
         } else {
           setState(() {
             _remainingSeconds = remaining;
@@ -832,6 +806,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
           ),
         ),
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+        matchDateTimeComponents: DateTimeComponents.time,
       );
     } catch (e) {
       debugPrint('❌ Failed to schedule notification for ${item.activity}: $e');
