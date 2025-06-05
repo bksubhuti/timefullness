@@ -7,6 +7,8 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:my_time_schedule/constants.dart';
 import 'package:my_time_schedule/dialogs/help_dialog.dart';
 import 'package:my_time_schedule/screens/timer_screen.dart';
+import 'package:my_time_schedule/services/notification_service.dart';
+import 'package:my_time_schedule/services/utilities.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 import 'package:csv/csv.dart';
@@ -111,78 +113,6 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
           await androidImplementation?.requestNotificationsPermission();
       setState(() {
         _notificationsEnabled = grantedNotificationPermission ?? false;
-      });
-    }
-  }
-
-  Future<void> timerNotification(Duration duration) async {
-    final scheduledTime = tz.TZDateTime.now(tz.local).add(duration);
-    final l10n = AppLocalizations.of(context)!;
-    Prefs.activeTimerHash = 1;
-
-    //////////////////////////////////////////////////////////
-    // create android specific dnd bypass
-    const notificationDndBypassDetails = NotificationDetails(
-      android: AndroidNotificationDetails(
-        kDndBypassTimerChannelId,
-        kDndBypassTimerChannelName,
-        channelDescription: kDndBypassTimerChannelDescription,
-        sound: RawResourceAndroidNotificationSound('bell'),
-        playSound: true,
-        enableVibration: true,
-        importance: Importance.max,
-        priority: Priority.max,
-        channelBypassDnd: true,
-      ),
-      iOS: DarwinNotificationDetails(
-        presentAlert: true,
-        presentBadge: true,
-        presentSound: true,
-        sound: 'bell.aiff', // Ensure it's included in iOS assets
-      ),
-      macOS: DarwinNotificationDetails(sound: 'bell.aiff'),
-    );
-    ///////////////////////////////////////////////////////////////
-
-    const notificationDetails = NotificationDetails(
-      android: AndroidNotificationDetails(
-        kTimerChannelId,
-        kTimerChannelName,
-        channelDescription: kTimerChannelDescription,
-        sound: RawResourceAndroidNotificationSound('bell'),
-        playSound: true,
-        importance: Importance.max,
-        priority: Priority.max,
-      ),
-      iOS: DarwinNotificationDetails(
-        presentAlert: true,
-        presentBadge: true,
-        presentSound: true,
-        sound: 'bell.aiff', // Ensure it's included in iOS assets
-      ),
-      macOS: DarwinNotificationDetails(sound: 'bell.aiff'),
-    );
-
-    if (Platform.isAndroid || Platform.isIOS || Platform.isMacOS) {
-      await flutterLocalNotificationsPlugin.zonedSchedule(
-        Prefs.activeTimerHash,
-        l10n.appName,
-        l10n.yourSessionHasEnded,
-        scheduledTime,
-        (Platform.isAndroid && Prefs.timerBypassDnd)
-            ? notificationDndBypassDetails
-            : notificationDetails, // bypass if switch
-        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-      );
-    } else if (Platform.isLinux || Platform.isWindows) {
-      // Fallback: simulate schedule with delayed Timer
-      Timer(duration, () async {
-        await flutterLocalNotificationsPlugin.show(
-          Prefs.activeTimerHash,
-          l10n.appName,
-          l10n.yourSessionHasEnded,
-          notificationDetails,
-        );
       });
     }
   }
@@ -292,7 +222,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     _saveSchedule();
 
     if (Prefs.allNotificationsEnabled) {
-      _scheduleNotification(newItem);
+      scheduleNotification(newItem);
     }
     _activityController.clear();
     selectedStartTime = null;
@@ -326,7 +256,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     _saveSchedule();
 
     if (Prefs.allNotificationsEnabled) {
-      _scheduleNotification(updatedItem);
+      scheduleNotification(updatedItem);
     }
 
     _activityController.clear();
@@ -383,8 +313,8 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     final format = DateFormat('h:mm a', 'en_US');
     schedule.sort((a, b) {
       try {
-        final aTime = format.parseStrict(_cleanTime(a.startTime));
-        final bTime = format.parseStrict(_cleanTime(b.startTime));
+        final aTime = format.parseStrict(cleanTime(a.startTime));
+        final bTime = format.parseStrict(cleanTime(b.startTime));
         return aTime.compareTo(bTime);
       } catch (e) {
         debugPrint('❌ Error parsing time during sort: $e');
@@ -398,8 +328,8 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     final format = DateFormat('h:mm a', 'en_US');
 
     try {
-      final start = format.parse(_cleanTime(item.startTime));
-      final end = format.parse(_cleanTime(item.endTime));
+      final start = format.parse(cleanTime(item.startTime));
+      final end = format.parse(cleanTime(item.endTime));
       final duration = end.difference(start);
       final int totalSeconds = duration.inSeconds;
 
@@ -415,7 +345,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
 
       WakelockPlus.enable();
 
-      await timerNotification(duration);
+      await timerNotification(duration, context);
 
       _updateTimer?.cancel();
       _updateTimer = Timer.periodic(const Duration(seconds: 1), (_) {
@@ -470,10 +400,6 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     setState(() => _timerVisible = false);
   }
 
-  Future<void> _cancelAllNotifications() async {
-    await flutterLocalNotificationsPlugin.cancelAll();
-  }
-
   Future<void> _checkForMidnightReset() async {
     final prefs = await SharedPreferences.getInstance();
     final lastResetDate = prefs.getString('lastResetDate');
@@ -494,16 +420,6 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     }
   }
 
-  String _cleanTime(String time) {
-    return time
-        .replaceAll(RegExp(r'[\u202F\u00A0]'), ' ') // Convert NBSP to space
-        .replaceFirstMapped(
-          RegExp(r'^(\d):'),
-          (m) => '0${m[1]}:',
-        ) // Add leading zero
-        .trim();
-  }
-
   void _editItem(int index) {
     final item = schedule[index];
     debugPrint('🕒 Editing item: "${item.activity}"');
@@ -520,7 +436,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
 
       // Use en_US locale to ensure 12-hour format with AM/PM
       final format = DateFormat('h:mm a', 'en_US');
-      final parsedStartTime = format.parseStrict(_cleanTime(item.startTime));
+      final parsedStartTime = format.parseStrict(cleanTime(item.startTime));
       /*
       DateTime parsedTime = DateFormat(
         'h:mm a',
@@ -530,14 +446,14 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
 */
 
       _activityController.text = item.activity;
-      final parsedEndTime = format.parseStrict(_cleanTime(item.endTime));
+      final parsedEndTime = format.parseStrict(cleanTime(item.endTime));
 
       final endTime = parsedEndTime;
       final durationInMinutes = endTime.difference(parsedStartTime).inMinutes;
       durationMinutes = durationInMinutes > 0 ? durationInMinutes : 50;
 
       selectedStartTime = TimeOfDay.fromDateTime(
-        DateFormat('h:mm a', 'en_US').parseStrict(_cleanTime(item.startTime)),
+        DateFormat('h:mm a', 'en_US').parseStrict(cleanTime(item.startTime)),
       );
 
       _openAddDialog(isEditing: true, editIndex: index);
@@ -788,60 +704,11 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     showDialog(context: context, builder: (context) => HelpDialogWidget());
   }
 
-  Future<void> _scheduleNotification(ScheduleItem item) async {
-    try {
-      final format = DateFormat('h:mm a', 'en_US');
-      final now = DateTime.now();
-      final parsed = format.parseStrict(_cleanTime(item.startTime));
-      final when = DateTime(
-        now.year,
-        now.month,
-        now.day,
-        parsed.hour,
-        parsed.minute,
-      );
-
-      if (when.isBefore(now)) {
-        debugPrint('⏩ Skipped scheduling for past time: ${item.startTime}');
-        return;
-      }
-
-      final tzWhen = tz.TZDateTime.from(when, tz.local);
-
-      await flutterLocalNotificationsPlugin.zonedSchedule(
-        item.id.hashCode,
-        'Scheduled: ${item.activity}',
-        'Starts at ${item.startTime}',
-        tzWhen,
-        const NotificationDetails(
-          android: AndroidNotificationDetails(
-            'schedule_channel',
-            'Scheduled Items',
-            channelDescription: 'Reminders for scheduled tasks',
-            playSound: true, // ✅ use default system sound
-            importance: Importance.max,
-            priority: Priority.high,
-          ),
-          iOS: DarwinNotificationDetails(
-            presentAlert: true,
-            presentBadge: true,
-            presentSound: true, // ✅ system sound
-          ),
-          macOS: DarwinNotificationDetails(
-            presentAlert: true,
-            presentSound: true, // ✅ system sound
-          ),
-        ),
-        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-        matchDateTimeComponents: DateTimeComponents.time,
-      );
-    } catch (e) {
-      debugPrint('❌ Failed to schedule notification for ${item.activity}: $e');
-    }
-  }
-
   Widget buildNotificationToggle() {
     final l10n = AppLocalizations.of(context)!;
+
+    // Refresh local state from Prefs
+    _allNotificationsEnabled = Prefs.allNotificationsEnabled;
 
     return Tooltip(
       message:
@@ -899,9 +766,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
 
             for (final item in schedule) {
               try {
-                final startTime = format.parseStrict(
-                  _cleanTime(item.startTime),
-                );
+                final startTime = format.parseStrict(cleanTime(item.startTime));
                 final fullStartTime = DateTime(
                   now.year,
                   now.month,
@@ -911,7 +776,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                 );
 
                 if (fullStartTime.isAfter(now)) {
-                  await _scheduleNotification(item);
+                  await scheduleNotification(item);
                 }
               } catch (e) {
                 debugPrint(

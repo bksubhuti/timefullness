@@ -51,7 +51,7 @@
   "yourSessionHasEnded": "သင့်လုပ်ငန်းဆောင်ရွက်မှုပြီးပြီ",
   "shouldTurnOffNotifcations": "အသိပေးချက်များပိတ်မလား?",
   "shouldTurnOnNotifcations": "အသိပေးချက်များဖွင့်မလား?",
-  "thisWillStopFutureNotifications":  "ဒါကလာမယ့် နိုတီများကို ရပ်မယ်" 
+  "thisWillStopFutureNotifications":  "ဒါကလာမယ့် နိုတီများကို ရပ်မယ်", 
   "thisWillEnableAllReminders": "ဒီအရာက မျှော်မှန်းထားသော အချိန်ဇယားများအတွက် အသိပေးမှုများကို ဖွင့်ပါမည်။ ဆက်လုပ်မလား?",
   "ok": "အိုကေ",
   "timerBypassDndTitle": "အချိန်ဇယား DND ကျော်ခြင်း",

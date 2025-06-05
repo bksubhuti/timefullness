@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:my_time_schedule/models/prefs.dart';
 import 'package:my_time_schedule/services/example_includes.dart';
-//import 'package:my_time_schedule/services/notification_service.dart';
+import 'package:my_time_schedule/services/notification_service.dart';
 import 'screens/schedule_screen.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
@@ -35,7 +35,7 @@ Future<void> main() async {
   // needed if you intend to initialize in the `main` function
   WidgetsFlutterBinding.ensureInitialized();
 
-  await _configureLocalTimeZone();
+  await configureLocalTimeZone();
 
   const AndroidInitializationSettings initializationSettingsAndroid =
       AndroidInitializationSettings('app_icon');
@@ -98,7 +98,7 @@ Future<void> main() async {
   final LinuxInitializationSettings initializationSettingsLinux =
       LinuxInitializationSettings(
         defaultActionName: 'Open notification',
-        defaultIcon: AssetsLinuxIcon('icons/app_icon.png'),
+        defaultIcon: AssetsLinuxIcon('/assets/icon/icon.png'),
       );
 
   final InitializationSettings initializationSettings = InitializationSettings(
@@ -134,18 +134,6 @@ Future<void> main() async {
       child: const MyTimeScheduleApp(),
     ),
   );
-}
-
-Future<void> _configureLocalTimeZone() async {
-  tz.initializeTimeZones();
-  if (kIsWeb) {
-    return;
-  }
-  if (Platform.isWindows) {
-    return;
-  }
-  final String? timeZoneName = await FlutterTimezone.getLocalTimezone();
-  tz.setLocalLocation(tz.getLocation(timeZoneName!));
 }
 
 class MyTimeScheduleApp extends StatelessWidget {

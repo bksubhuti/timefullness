@@ -70,5 +70,6 @@
   "finishSetupTitle": "Hoàn tất cài đặt",
   "finishSetupMessage": "Sau khi cấp quyền, hãy nhấn 'Tiếp tục'",
   "continueLabel": "Tiếp tục",
-  "meditation": "Thiền"
+  "meditation": "Thiền",
+  "notificationsTurnedOff": "Thông báo đã bị tắt. Bạn cần bật lại bằng cách nhấn vào biểu tượng chuông (🔔)."
 }

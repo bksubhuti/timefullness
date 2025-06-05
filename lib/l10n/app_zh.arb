@@ -70,5 +70,6 @@
   "finishSetupTitle": "完成设置",
   "finishSetupMessage": "授权后点击“继续”",
   "continueLabel": "继续",
-  "meditation": "冥想"
+  "meditation": "冥想",
+  "notificationsTurnedOff": "通知已关闭。您需要点击铃铛图标 (🔔) 重新开启它们。"
 }

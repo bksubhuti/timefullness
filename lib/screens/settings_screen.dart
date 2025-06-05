@@ -7,6 +7,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:my_time_schedule/constants.dart';
 import 'package:my_time_schedule/models/schedule_item.dart';
 import 'package:my_time_schedule/plugin.dart';
+import 'package:my_time_schedule/services/notification_service.dart';
 import '../models/prefs.dart';
 import '../services/hive_schedule_repository.dart';
 import 'package:hive/hive.dart';
@@ -170,6 +171,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               setState(() {
                 _selectedScheduleId = value;
               });
+              doScheduleChangedToggleAction();
             },
           ),
           const SizedBox(height: 16),
@@ -280,6 +282,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
     await scheduleRepo.setActiveScheduleId(name);
     Prefs.currentScheduleId = name;
 
+    doScheduleChangedToggleAction();
+
     // Reload from source to avoid duplicates
     await _loadScheduleData();
 
@@ -351,6 +355,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
       Prefs.currentScheduleId = newName;
     }
 
+    doScheduleChangedToggleAction();
+
     await _loadScheduleData();
 
     setState(() {
@@ -408,6 +414,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
       await scheduleRepo.setActiveScheduleId('');
       Prefs.currentScheduleId = '';
     }
+
+    doScheduleChangedToggleAction();
 
     await _loadScheduleData();
 
@@ -501,6 +509,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ],
             ),
       );
+    }
+  }
+
+  void showRetoggleMessage() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(AppLocalizations.of(context)!.notificationsTurnedOff),
+        duration: const Duration(seconds: 4),
+      ),
+    );
+  }
+
+  doScheduleChangedToggleAction() async {
+    // if active.. kill all schedules
+    if (Prefs.allNotificationsEnabled) {
+      await cancelAllNotifications();
+      Prefs.allNotificationsEnabled = false;
+      showRetoggleMessage();
     }
   }
 }
