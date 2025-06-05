@@ -202,7 +202,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             },
           ),
           SizedBox(height: 10),
-          if (Platform.isAndroid || true)
+          if (Platform.isAndroid)
             SwitchListTile(
               title: Text(AppLocalizations.of(context)!.timerBypassDndTitle),
               subtitle: Text(

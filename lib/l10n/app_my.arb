@@ -13,7 +13,7 @@
   "add": "ထည့်မည်",
   "rename": "အမည်ပြောင်းမည်",
   "delete": "ဖျက်မည်",
-  "playSoundWhenChecked": "အလုပ်ပြီးသွားသည့်အခါအသံများမည်",
+  "playSoundWhenChecked":  "အချိန််ပြည့်လျှင်အသံြမည်မည်", 
   "playSoundSubtitle": "အလုပ်တစ်ခုပြီးပြီဟုပြသသည့်အခါအသံဖွင့်ပါ",
   "newScheduleName": "ဇယားအမည်အသစ်",
   "enterScheduleName": "ဇယားအမည်ထည့်ပါ",
@@ -48,11 +48,10 @@
   "language": "ဘာသာစကား",
   "timer": "တိုင်းတာစက်",
   "finished": "ပြီးပါပြီ",
-  "yourSessionHasEnded": "သင်၏အကြိမ်အမှတ်တင်ပြီးဆုံးသွားပါပြီ။",
-  "yourSessionHasEnded": "သင့်အစည်းအဝေးပြီးဆုံးပါပြီ။",
+  "yourSessionHasEnded": "သင့်လုပ်ငန်းဆောင်ရွက်မှုပြီးပြီ",
   "shouldTurnOffNotifcations": "အသိပေးချက်များပိတ်မလား?",
   "shouldTurnOnNotifcations": "အသိပေးချက်များဖွင့်မလား?",
-  "thisWillStopFutureNotifications": "ဒီအရာက မျှော်မှန်းထားသော အသိပေးချက်များအားလုံးကို ရပ်ထားပါမည်။ ဆက်လုပ်မလား?",
+  "thisWillStopFutureNotifications":  "ဒါကလာမယ့် နိုတီများကို ရပ်မယ်" 
   "thisWillEnableAllReminders": "ဒီအရာက မျှော်မှန်းထားသော အချိန်ဇယားများအတွက် အသိပေးမှုများကို ဖွင့်ပါမည်။ ဆက်လုပ်မလား?",
   "ok": "အိုကေ",
   "timerBypassDndTitle": "အချိန်ဇယား DND ကျော်ခြင်း",
@@ -70,5 +69,5 @@
   "finishSetupTitle": "ဆက်တပ်ခြင်းကိုပြီးမြောက်ပါ",
   "finishSetupMessage": "ခွင့်ပြုပြီးနောက် 'Continue' ကိုနှိပ်ပါ",
   "continueLabel": "ဆက်လက်လုပ်ဆောင်ပါ",
-  "meditation": "အာရုံစူးစိုက်ခြင်း"
+  "meditation": "တရားထိုင်ခြင်း"
 }

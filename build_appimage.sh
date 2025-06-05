@@ -18,3 +18,4 @@ chmod +x my_time_schedule.AppDir/my_time_schedule
 # Build the AppImage
 #ARCH=x86_64 ./appimagetool-x86_64.AppImage my_time_schedule.AppDir/ my_time_schedule.AppImage
 ./appimagetool-x86_64.AppImage my_time_schedule.AppDir/ my_time_schedule.AppImage
+cp my_time_schedule.AppImage ~/Desktop/TPR/
