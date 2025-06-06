@@ -1,5 +1,6 @@
 // schedule_screet.dart
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -12,7 +13,6 @@ import 'package:my_time_schedule/services/notification_service.dart';
 import 'package:my_time_schedule/services/utilities.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
-import 'package:csv/csv.dart';
 import 'package:flutter/services.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:my_time_schedule/models/prefs.dart';
@@ -42,7 +42,6 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
   final AudioPlayer _audioPlayer = AudioPlayer();
   bool _isDefaultScheduleLoaded = false;
   late final HiveScheduleRepository scheduleRepo;
-  static const String defaultScheduleId = 'Default';
   int _activeDuration = 0;
   int _remainingSeconds = 0;
   Timer? _countdownTimer;
@@ -167,37 +166,23 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
 
   Future<void> _loadDefaultSchedule() async {
     try {
-      // Load CSV file from assets
-      final String csvString = await rootBundle.loadString(
-        'assets/daily schedule - Sheet1.csv',
-      );
-      debugPrint("📄 CSV raw content:\n$csvString");
+      // Load default json file from assets
+      final raw = await rootBundle.loadString('assets/default_schedule.json');
+      final List<dynamic> data = json.decode(raw);
+      final List<ScheduleItem> items =
+          data
+              .map((e) => ScheduleItem.fromJson(Map<String, dynamic>.from(e)))
+              .toList();
 
-      // Parse CSV
-      List<List<dynamic>> csvTable = const CsvToListConverter().convert(
-        csvString,
-      );
+      setState(() {
+        schedule = items;
+        _isDefaultScheduleLoaded = true;
+        _sortScheduleByTime();
+      });
 
-      // Skip header row
-      if (csvTable.length > 1) {
-        // Start from index 1 to skip header
-        final headers = csvTable.first.cast<String>();
-        final rows = csvTable.skip(1);
-
-        final defaultSchedule =
-            rows.map((row) {
-              final map = Map<String, dynamic>.fromIterables(headers, row);
-              return ScheduleItem.fromCsv(map);
-            }).toList();
-        setState(() {
-          schedule = defaultSchedule;
-          _isDefaultScheduleLoaded = true;
-          _sortScheduleByTime();
-        });
-
-        // Save the default schedule
-        await _saveSchedule();
-      }
+      // Save the default schedule
+      Prefs.currentScheduleId = kDefaultScheduleName;
+      await _saveSchedule();
     } catch (e) {
       debugPrint('Error loading default schedule: $e');
     }

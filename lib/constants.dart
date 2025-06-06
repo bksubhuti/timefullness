@@ -1,3 +1,6 @@
+// default schedule ID
+const String kDefaultScheduleName = "Default";
+
 // Notification channel IDs and names
 const String kDndBypassTimerChannelId =
     'my_time_schedule_channel_timer_dnd_bypass';

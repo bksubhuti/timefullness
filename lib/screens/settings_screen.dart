@@ -304,7 +304,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Future<void> _renameSchedule() async {
     if (_selectedScheduleId.isEmpty) return;
-    if (_selectedScheduleId == defaultScheduleId) {
+    if (_selectedScheduleId == kDefaultScheduleName) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(AppLocalizations.of(context)!.youCannotRenameDefault),
@@ -377,7 +377,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Future<void> _deleteSchedule() async {
     if (_selectedScheduleId.isEmpty) return;
 
-    if (_selectedScheduleId == defaultScheduleId) {
+    if (_selectedScheduleId == kDefaultScheduleName) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(AppLocalizations.of(context)!.youCannotDeleteDefault),

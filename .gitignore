@@ -62,3 +62,8 @@ app.*.map.json
 **/android/key.properties
 **/android/keystore.properties
 *.jks
+
+# get rid of generated files for OS Builds.
+/linux/flutter/generated_*.*
+/macos/Flutter/Generated*.*
+/windows/flutter/generated_*.*

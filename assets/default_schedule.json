@@ -1,0 +1,42 @@
+[
+    {
+        "startTime": "9:00 AM",
+        "endTime": "9:50 AM",
+        "activity": "Meditation"
+    },
+    {
+        "startTime": "10:00 AM",
+        "endTime": "10:50 AM",
+        "activity": "Reading / Quiet Work"
+    },
+    {
+        "startTime": "11:00 AM",
+        "endTime": "11:50 AM",
+        "activity": "Chores / Free time"
+    },
+    {
+        "startTime": "12:00 PM",
+        "endTime": "1:00 PM",
+        "activity": "Lunch + Rest"
+    },
+    {
+        "startTime": "1:00 PM",
+        "endTime": "1:50 PM",
+        "activity": "Meditation or Study"
+    },
+    {
+        "startTime": "2:00 PM",
+        "endTime": "2:50 PM",
+        "activity": "Focused Work (Writing / Study)"
+    },
+    {
+        "startTime": "3:00 PM",
+        "endTime": "3:50 PM",
+        "activity": "Meditation"
+    },
+    {
+        "startTime": "4:00 PM",
+        "endTime": "4:50 PM",
+        "activity": "Light Chores or Walking Meditation"
+    }
+]

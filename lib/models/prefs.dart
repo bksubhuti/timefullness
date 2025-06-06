@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:my_time_schedule/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 const String timerColorPref = "timerColor";
 const String currentScheduleIdPref = 'currentScheduleId';
-const String defaultScheduleId = 'Default';
 const String backgroundEnabledPref = 'backgroundEnabled';
 const String destinationTimePref = 'destinationTime';
 const String activeTimerDurationPref = 'activeTimerDuration';
@@ -34,7 +34,7 @@ class Prefs {
   static set timerColor(int value) => instance.setInt(timerColorPref, value);
 
   static String get currentScheduleId =>
-      instance.getString(currentScheduleIdPref) ?? defaultScheduleId;
+      instance.getString(currentScheduleIdPref) ?? kDefaultScheduleName;
   static set currentScheduleId(String value) =>
       instance.setString(currentScheduleIdPref, value);
 
