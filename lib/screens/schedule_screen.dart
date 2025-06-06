@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:in_app_review/in_app_review.dart';
 import 'package:my_time_schedule/constants.dart';
 import 'package:my_time_schedule/dialogs/help_dialog.dart';
 import 'package:my_time_schedule/screens/timer_screen.dart';
@@ -617,6 +618,16 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
               onTap: () {
                 Navigator.pop(context);
                 _showHelpDialog(context);
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.rate_review),
+              title: Text(l10n.rateThisApp),
+              onTap: () async {
+                final InAppReview inAppReview = InAppReview.instance;
+                if (await inAppReview.isAvailable()) {
+                  inAppReview.openStoreListing();
+                }
               },
             ),
           ],

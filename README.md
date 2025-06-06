@@ -30,43 +30,39 @@ samples, guidance on mobile development, and a full API reference.
 - ✅ Sort + edit + check-off functionality  
 - ✅ Fixed visual timer for desktop  
 - ✅ Removed swipe-to-delete  
-- ✅ Startup crash + build issues resolved  
 - ✅ Saved and restored last active schedule  
+- ✅ Daily schedule notifications  
+- ✅ Android Do Not Disturb (DND) bypass notifications  
+- ✅ In-app review integration  
+- ✅ Start timer automatically on app open  
+- ✅ Default schedule selector  
+- ✅ Localization (all supported languages)  
+- ✅ Toggle to enable/disable all scheduled notifications  
+- ❌ iOS App Store submission (not yet finished)  
+- ~~Add `flutter_background` to ensure timer works with phone sleep~~ *(replaced with notification-based solution)*  
 
 ### 🔧 Planned Features
 
 #### 🖌️ UI Enhancements
-- [ ] Dark theme / light theme toggle (from Prefs)
-- [ ] Custom timer styles (e.g. circular vs. bar)
-- [ ] Show next upcoming activity prominently
-- [ ] Show remaining time in AppBar or notification
+- [ ] Dark theme / light theme toggle (from Prefs)  
+- [ ] Custom timer styles (e.g. circular vs. bar)  
+- [ ] Show next upcoming activity prominently  
+- [ ] Show remaining time in AppBar or notification  
 
 #### 🔔 Sound Customization
-- [ ] Choose different bell sounds (dropdown)
-- [ ] Optional chime per activity
-- [ ] Use system sounds (if feasible)
+- [ ] Choose different bell sounds (dropdown)  
+- [ ] Optional chime per activity  
+- [ ] Use system sounds (if feasible)  
 
 #### 📆 Schedule Enhancements
-- [ ] Per-schedule colors or themes
-- [ ] Schedule import/export (CSV or JSON)
-- [ ] Cloud sync support (Firebase or manual)
-- [ ] Shared viewing or schedule templates
+- [ ] Cloud sync support (Firebase or manual)  
+- [ ] Download selected schedule from GitHub  
+- [ ] Per-schedule colors or themes  
+- [ ] Schedule import/export (CSV or JSON)  
+- [ ] Shared viewing or schedule templates  
 
-#### 🔋 Background Support
-- [ ] Add `flutter_background` to ensure timer works with phone sleep
-- [ ] Notification timer (system tray countdown?)
-
-#### ⚙️ Settings Enhancements
-- [ ] Toggle to enable background mode
-- [ ] Start timer automatically on app open
-- [ ] Default schedule selector
-
-#### 🌐 Localization
-- [ ] Sinhala/Pāli translations
-- [ ] Right-to-left support for Arabic/Hebrew (if needed)
 
 #### 🧘 Buddhist Mode (Optional)
-- [ ] Add *Paṭipatti* schedule templates (e.g., meditation retreat mode)
-- [ ] Metta bell every 30 min option
-- [ ] Dhamma quotes on check-in/check-out
-
+- [ ] Add *Paṭipatti* schedule templates (e.g., meditation retreat mode)  
+- [ ] Metta bell every 30 min option  
+- [ ] Dhamma quotes on check-in/check-out  

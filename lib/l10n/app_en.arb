@@ -70,5 +70,6 @@
   "finishSetupMessage": "After granting permission, press Continue.",
   "continueLabel": "Continue",
   "meditation": "Meditation",
-  "notificationsTurnedOff": "Notifications have been turned off. You need to toggle the bell icon (🔔) to turn them on again."
+  "notificationsTurnedOff": "Notifications have been turned off. You need to toggle the bell icon (🔔) to turn them on again.",
+  "rateThisApp" : "Rate this app"
 }
