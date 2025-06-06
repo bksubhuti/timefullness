@@ -34,19 +34,21 @@ class ScheduleItem {
   }
 
   factory ScheduleItem.fromJson(Map<String, dynamic> json) {
-    final parsedCheckedAt = json['checkedAt'];
-    return ScheduleItem(
-      id: json['id'] ?? UniqueKey().toString(),
-      startTime: json['startTime'],
-      endTime: json['endTime'],
-      activity: json['activity'],
-      done: json['done'] ?? false,
-      checkedAt:
-          parsedCheckedAt != null
-              ? DateTime.tryParse(parsedCheckedAt) ??
-                  DateTime.fromMillisecondsSinceEpoch(0)
-              : DateTime.fromMillisecondsSinceEpoch(0),
-    );
+    try {
+      return ScheduleItem(
+        id: json['id'] ?? UniqueKey().toString(),
+        startTime: (json['startTime'] ?? '').toString(),
+        endTime: (json['endTime'] ?? '').toString(),
+        activity: (json['activity'] ?? '').toString(),
+        done: json['done'] ?? false,
+        checkedAt:
+            DateTime.tryParse(json['checkedAt'] ?? '') ??
+            DateTime.fromMillisecondsSinceEpoch(0),
+      );
+    } catch (e) {
+      debugPrint('❌ Error parsing ScheduleItem: $e');
+      rethrow;
+    }
   }
 
   Map<String, dynamic> toJson() {

@@ -5,6 +5,7 @@ import 'package:android_intent_plus/android_intent.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:my_time_schedule/constants.dart';
+import 'package:my_time_schedule/models/public_schedule_info.dart';
 import 'package:my_time_schedule/models/schedule_item.dart';
 import 'package:my_time_schedule/plugin.dart';
 import 'package:my_time_schedule/services/notification_service.dart';
@@ -15,6 +16,10 @@ import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:my_time_schedule/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import '../providers/locale_provider.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import '../models/schedule_item.dart';
+import '../services/hive_schedule_repository.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -174,7 +179,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               doScheduleChangedToggleAction();
             },
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 20),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
@@ -191,6 +196,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 child: Text(AppLocalizations.of(context)!.delete),
               ),
             ],
+          ),
+          SizedBox(height: 20),
+          ElevatedButton(
+            onPressed: _downloadSchedule,
+            child: Text("Download Public Schedule"),
           ),
           const Divider(height: 40),
           SwitchListTile(
@@ -527,6 +537,90 @@ class _SettingsScreenState extends State<SettingsScreen> {
       await cancelAllNotifications();
       Prefs.allNotificationsEnabled = false;
       showRetoggleMessage();
+    }
+  }
+
+  Future<void> _downloadSchedule() async {
+    const indexUrl =
+        'https://raw.githubusercontent.com/bksubhuti/my_time_schedule/refs/heads/main/public_schedules/index.json';
+
+    try {
+      final indexResponse = await http.get(Uri.parse(indexUrl));
+      if (indexResponse.statusCode != 200) throw Exception('Index not found');
+
+      final List<dynamic> data = json.decode(indexResponse.body);
+      final List<PublicScheduleInfo> schedules =
+          data
+              .map(
+                (e) =>
+                    PublicScheduleInfo.fromJson(Map<String, dynamic>.from(e)),
+              )
+              .toList();
+
+      if (!context.mounted) return;
+
+      final selected = await showDialog<PublicScheduleInfo>(
+        context: context,
+        builder: (context) {
+          return SimpleDialog(
+            title: Text('Select a Schedule'),
+            children:
+                schedules
+                    .map(
+                      (s) => SimpleDialogOption(
+                        child: ListTile(
+                          title: Text(s.name),
+                          subtitle: Text(s.description),
+                        ),
+                        onPressed: () => Navigator.pop(context, s),
+                      ),
+                    )
+                    .toList(),
+          );
+        },
+      );
+
+      if (selected == null) return;
+
+      final fileUrl =
+          'https://raw.githubusercontent.com/bksubhuti/my_time_schedule/refs/heads/main/public_schedules/${selected.file}';
+      final fileResponse = await http.get(Uri.parse(fileUrl));
+      if (fileResponse.statusCode != 200) {
+        throw Exception('Failed to fetch: ${selected.file}');
+      }
+
+      final List<dynamic> jsonList = json.decode(fileResponse.body);
+      final List<ScheduleItem> items =
+          jsonList
+              .map((e) => ScheduleItem.fromJson(Map<String, dynamic>.from(e)))
+              .toList();
+
+      // Save schedule
+      final box = Hive.box('schedules');
+      final repo = HiveScheduleRepository(box);
+      await repo.saveSchedule(selected.id, items);
+      await repo.setActiveScheduleId(selected.id);
+      Prefs.currentScheduleId = selected.id;
+
+      // Notify and refresh
+      doScheduleChangedToggleAction();
+      await _loadScheduleData();
+
+      if (context.mounted) {
+        setState(() {
+          _selectedScheduleId = selected.id;
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('✅ Loaded "${selected.name}" schedule')),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('❌ Failed: $e')));
+      }
     }
   }
 }

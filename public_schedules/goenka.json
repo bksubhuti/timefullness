@@ -1,20 +1,82 @@
 [
   {
-    "title": "Goenka Meditation",
-    "startTime": "04:00 AM",
-    "endTime": "06:00 AM",
-    "done": false
+    "startTime": "4:00 AM",
+    "endTime": "4:30 AM",
+    "activity": "Morning wake-up bell"
   },
   {
-    "title": "Breakfast",
-    "startTime": "06:30 AM",
-    "endTime": "07:00 AM",
-    "done": false
+    "startTime": "4:30 AM",
+    "endTime": "6:30 AM",
+    "activity": "Meditate in the hall or in your room"
   },
   {
-    "title": "Goenka Walking",
-    "startTime": "07:30 AM",
-    "endTime": "08:30 AM",
-    "done": false
+    "startTime": "6:30 AM",
+    "endTime": "8:00 AM",
+    "activity": "Breakfast break"
+  },
+  {
+    "startTime": "8:00 AM",
+    "endTime": "9:00 AM",
+    "activity": "Group meditation in the hall"
+  },
+  {
+    "startTime": "9:00 AM",
+    "endTime": "11:00 AM",
+    "activity": "Meditate in the hall or in your room (teacher's instructions)"
+  },
+  {
+    "startTime": "11:00 AM",
+    "endTime": "12:00 PM",
+    "activity": "Lunch break"
+  },
+  {
+    "startTime": "12:00 PM",
+    "endTime": "1:00 PM",
+    "activity": "Rest / Teacher interviews"
+  },
+  {
+    "startTime": "1:00 PM",
+    "endTime": "2:30 PM",
+    "activity": "Meditate in the hall or in your room"
+  },
+  {
+    "startTime": "2:30 PM",
+    "endTime": "3:30 PM",
+    "activity": "Group meditation in the hall"
+  },
+  {
+    "startTime": "3:30 PM",
+    "endTime": "5:00 PM",
+    "activity": "Meditate in the hall or in your room (teacher's instructions)"
+  },
+  {
+    "startTime": "5:00 PM",
+    "endTime": "6:00 PM",
+    "activity": "Tea break"
+  },
+  {
+    "startTime": "6:00 PM",
+    "endTime": "7:00 PM",
+    "activity": "Group meditation in the hall"
+  },
+  {
+    "startTime": "7:00 PM",
+    "endTime": "8:15 PM",
+    "activity": "Discourse in the hall"
+  },
+  {
+    "startTime": "8:15 PM",
+    "endTime": "9:00 PM",
+    "activity": "Group meditation in the hall"
+  },
+  {
+    "startTime": "9:00 PM",
+    "endTime": "9:30 PM",
+    "activity": "Question time in the hall"
+  },
+  {
+    "startTime": "9:30 PM",
+    "endTime": "10:00 PM",
+    "activity": "Retire to your room / Lights out"
   }
 ]

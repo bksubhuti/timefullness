@@ -1,20 +1,102 @@
 [
   {
-    "title": "Mahasi Meditation",
-    "startTime": "04:00 AM",
-    "endTime": "06:00 AM",
-    "done": false
+    "startTime": "3:00 AM",
+    "endTime": "3:30 AM",
+    "activity": "Wake up"
   },
   {
-    "title": "Breakfast",
-    "startTime": "06:30 AM",
-    "endTime": "07:00 AM",
-    "done": false
+    "startTime": "3:30 AM",
+    "endTime": "4:00 AM",
+    "activity": "Walking Meditation"
   },
   {
-    "title": "Mahasi Walking",
-    "startTime": "07:30 AM",
-    "endTime": "08:30 AM",
-    "done": false
+    "startTime": "4:00 AM",
+    "endTime": "4:45 AM",
+    "activity": "Sitting Meditation"
+  },
+  {
+    "startTime": "4:45 AM",
+    "endTime": "5:00 AM",
+    "activity": "Metta Chanting"
+  },
+  {
+    "startTime": "5:00 AM",
+    "endTime": "6:00 AM",
+    "activity": "Breakfast"
+  },
+  {
+    "startTime": "6:00 AM",
+    "endTime": "7:00 AM",
+    "activity": "Sitting Meditation"
+  },
+  {
+    "startTime": "7:00 AM",
+    "endTime": "8:00 AM",
+    "activity": "Walking Meditation"
+  },
+  {
+    "startTime": "8:00 AM",
+    "endTime": "9:00 AM",
+    "activity": "Sitting Meditation"
+  },
+  {
+    "startTime": "9:00 AM",
+    "endTime": "10:00 AM",
+    "activity": "Shower or Walking Meditation"
+  },
+  {
+    "startTime": "10:30 AM",
+    "endTime": "11:30 AM",
+    "activity": "Lunch (Line up at 10:15 AM)"
+  },
+  {
+    "startTime": "12:00 PM",
+    "endTime": "1:00 PM",
+    "activity": "Sitting Meditation"
+  },
+  {
+    "startTime": "1:00 PM",
+    "endTime": "2:00 PM",
+    "activity": "Walking Meditation"
+  },
+  {
+    "startTime": "2:00 PM",
+    "endTime": "3:00 PM",
+    "activity": "Dhamma Talk (3:00 PM Juice Time)"
+  },
+  {
+    "startTime": "3:00 PM",
+    "endTime": "4:00 PM",
+    "activity": "Walking Meditation"
+  },
+  {
+    "startTime": "4:00 PM",
+    "endTime": "5:00 PM",
+    "activity": "Sitting Meditation"
+  },
+  {
+    "startTime": "5:00 PM",
+    "endTime": "6:00 PM",
+    "activity": "Shower or Walking Meditation"
+  },
+  {
+    "startTime": "6:00 PM",
+    "endTime": "7:00 PM",
+    "activity": "Sitting Meditation"
+  },
+  {
+    "startTime": "7:00 PM",
+    "endTime": "8:00 PM",
+    "activity": "Walking Meditation"
+  },
+  {
+    "startTime": "8:00 PM",
+    "endTime": "9:00 PM",
+    "activity": "Sitting Meditation"
+  },
+  {
+    "startTime": "9:00 PM",
+    "endTime": "9:30 PM",
+    "activity": "Sitting or Walking Meditation in Room"
   }
 ]
