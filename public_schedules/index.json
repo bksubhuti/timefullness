@@ -28,5 +28,11 @@
         "name": "Study Retreat Schedule",
         "description": "Dhamma study-focused schedule with built-in breaks for memorization and reading.",
         "file": "study_retreat.json"
+    },
+    {
+        "id": "study_retreat",
+        "name": "Study Retreat Schedule",
+        "description": "Dhamma study and Meditation focused schedule",
+        "file": "meditation_study.json"
     }
 ]
