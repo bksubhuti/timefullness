@@ -1,0 +1,92 @@
+[
+    {
+        "startTime": "5:30 AM",
+        "endTime": "6:30 AM",
+        "activity": "Chanting + Meditation"
+    },
+    {
+        "startTime": "6:30 AM",
+        "endTime": "7:00 AM",
+        "activity": "Projects"
+    },
+    {
+        "startTime": "7:00 AM",
+        "endTime": "7:30 AM",
+        "activity": "Breakfast + Chores"
+    },
+    {
+        "startTime": "7:30 AM",
+        "endTime": "8:00 AM",
+        "activity": "Check messages & emails"
+    },
+    {
+        "startTime": "8:00 AM",
+        "endTime": "8:50 AM",
+        "activity": "Study"
+    },
+    {
+        "startTime": "9:00 AM",
+        "endTime": "9:50 AM",
+        "activity": "Study Pāli"
+    },
+    {
+        "startTime": "10:00 AM",
+        "endTime": "10:15 AM",
+        "activity": "Review memorized items"
+    },
+    {
+        "startTime": "11:00 AM",
+        "endTime": "12:00 PM",
+        "activity": "Lunch"
+    },
+    {
+        "startTime": "1:00 PM",
+        "endTime": "1:50 PM",
+        "activity": "Meditation"
+    },
+    {
+        "startTime": "2:00 PM",
+        "endTime": "2:50 PM",
+        "activity": "Study"
+    },
+    {
+        "startTime": "3:00 PM",
+        "endTime": "3:15 PM",
+        "activity": "Review memorized items"
+    },
+    {
+        "startTime": "3:30 PM",
+        "endTime": "4:30 PM",
+        "activity": "Meditation"
+    },
+    {
+        "startTime": "4:30 PM",
+        "endTime": "5:00 PM",
+        "activity": "Chores + Free time"
+    },
+    {
+        "startTime": "5:00 PM",
+        "endTime": "5:50 PM",
+        "activity": "Study"
+    },
+    {
+        "startTime": "6:00 PM",
+        "endTime": "7:00 PM",
+        "activity": "Bath + Free time"
+    },
+    {
+        "startTime": "7:00 PM",
+        "endTime": "8:00 PM",
+        "activity": "Projects"
+    },
+    {
+        "startTime": "8:00 PM",
+        "endTime": "8:50 PM",
+        "activity": "Listen or Read Dhamma"
+    },
+    {
+        "startTime": "9:00 PM",
+        "endTime": "9:50 PM",
+        "activity": "Meditation + Chanting"
+    }
+]
