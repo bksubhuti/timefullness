@@ -8,10 +8,10 @@ class SolidVisualTimer extends StatelessWidget {
   final int total;
 
   const SolidVisualTimer({
-    Key? key,
+    super.key,
     required this.remaining,
     required this.total,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

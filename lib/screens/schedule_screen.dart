@@ -3,6 +3,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:in_app_review/in_app_review.dart';
@@ -13,7 +14,6 @@ import 'package:my_time_schedule/services/notification_service.dart';
 import 'package:my_time_schedule/services/utilities.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter/services.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:my_time_schedule/models/prefs.dart';
 import 'package:my_time_schedule/plugin.dart';
@@ -24,7 +24,6 @@ import '../models/schedule_item.dart';
 import '../widgets/schedule_tile.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:my_time_schedule/services/example_includes.dart';
-import 'package:timezone/timezone.dart' as tz;
 import 'package:my_time_schedule/l10n/app_localizations.dart';
 
 class ScheduleScreen extends StatefulWidget {
@@ -34,7 +33,8 @@ class ScheduleScreen extends StatefulWidget {
   State<ScheduleScreen> createState() => _ScheduleScreenState();
 }
 
-class _ScheduleScreenState extends State<ScheduleScreen> {
+class _ScheduleScreenState extends State<ScheduleScreen>
+    with WidgetsBindingObserver {
   List<ScheduleItem> schedule = [];
   TimeOfDay? selectedStartTime;
   int durationMinutes = 50; // Default duration of 30 minutes
@@ -64,14 +64,23 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     _requestPermissions();
 
     _resumeVisualTimerIfNeeded();
+    WidgetsBinding.instance.addObserver(this);
+    _checkForMidnightReset();
   }
 
   @override
   void dispose() {
     _audioPlayer.dispose();
     selectNotificationStream.close();
-
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _checkForMidnightReset();
+    }
   }
 
   Future<void> _isAndroidPermissionGranted() async {
@@ -396,10 +405,13 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
 
     if (lastResetDate != today) {
       debugPrint("🌅 New day detected, resetting schedule");
+      Prefs.allNotificationsEnabled = false;
+      cancelAllNotifications();
       setState(() {
         for (var item in schedule) {
           item.done = false;
         }
+        _allNotificationsEnabled = false;
       });
       await prefs.setString('lastResetDate', today);
       await _saveSchedule();

@@ -88,7 +88,7 @@ class DialPainter extends CustomPainter {
     // Draw selected segment
     final selectedPaint =
         Paint()
-          ..color = Colors.blue.withOpacity(0.3)
+          ..color = Colors.blue
           ..style = PaintingStyle.fill;
     canvas.drawArc(
       Rect.fromCircle(center: center, radius: radius),

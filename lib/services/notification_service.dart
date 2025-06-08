@@ -5,10 +5,7 @@ import 'package:my_time_schedule/constants.dart';
 import 'package:my_time_schedule/models/prefs.dart';
 import 'package:my_time_schedule/models/schedule_item.dart';
 import 'package:my_time_schedule/plugin.dart';
-import 'package:my_time_schedule/services/example_includes.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:my_time_schedule/services/utilities.dart';
-import 'package:path_provider/path_provider.dart';
 
 /// from the example file
 /// import 'dart:async';
@@ -22,9 +19,7 @@ import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:my_time_schedule/l10n/app_localizations.dart';
-import 'package:provider/provider.dart';
 
 Future<void> configureLocalTimeZone() async {
   tz.initializeTimeZones();
@@ -34,8 +29,8 @@ Future<void> configureLocalTimeZone() async {
   if (Platform.isWindows) {
     return;
   }
-  final String? timeZoneName = await FlutterTimezone.getLocalTimezone();
-  tz.setLocalLocation(tz.getLocation(timeZoneName!));
+  final String timeZoneName = await FlutterTimezone.getLocalTimezone();
+  tz.setLocalLocation(tz.getLocation(timeZoneName));
 }
 
 Future<void> timerNotification(Duration duration, BuildContext context) async {

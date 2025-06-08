@@ -18,8 +18,6 @@ import 'package:provider/provider.dart';
 import '../providers/locale_provider.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import '../models/schedule_item.dart';
-import '../services/hive_schedule_repository.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
