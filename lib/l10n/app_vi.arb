@@ -72,5 +72,7 @@
   "continueLabel": "Tiếp tục",
   "meditation": "Thiền",
   "notificationsTurnedOff": "Thông báo đã bị tắt. Bạn cần bật lại bằng cách nhấn vào biểu tượng chuông (🔔).",
-  "rateThisApp": "Đánh giá ứng dụng này"
+  "rateThisApp": "Đánh giá ứng dụng này",
+  "selectASchedule": "Chọn lịch trình",
+  "downloadPublicSchedule": "Tải xuống lịch trình công khai"
 }

@@ -650,7 +650,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
             child: Row(
               children: [
                 Text(
-                  "${Prefs.currentScheduleId} Schedule: ",
+                  "${scheduleRepo.getScheduleName(Prefs.currentScheduleId)} Schedule: ",
                   style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,

@@ -71,5 +71,7 @@
   "continueLabel": "Continue",
   "meditation": "Meditation",
   "notificationsTurnedOff": "Notifications have been turned off. You need to toggle the bell icon (🔔) to turn them on again.",
-  "rateThisApp" : "Rate this app"
+  "rateThisApp" : "Rate this app",
+  "selectASchedule": "Select a Schedule",
+  "downloadPublicSchedule": "Download Public Schedule"
 }

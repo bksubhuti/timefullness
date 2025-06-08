@@ -124,6 +124,7 @@ Future<void> main() async {
   await Hive.initFlutter(dir.path);
   debugPrint("Hive initialized at ${dir.path}");
   await Hive.openBox('schedules');
+  await Hive.openBox('schedule_meta');
   await Prefs.init();
   runApp(
     MultiProvider(

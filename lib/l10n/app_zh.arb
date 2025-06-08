@@ -72,5 +72,7 @@
   "continueLabel": "继续",
   "meditation": "冥想",
   "notificationsTurnedOff": "通知已关闭。您需要点击铃铛图标 (🔔) 重新开启它们。",
-  "rateThisApp": "为此应用评分"
+  "rateThisApp": "为此应用评分",
+  "selectASchedule": "选择一个时间表",
+  "downloadPublicSchedule": "下载公开时间表"
 }

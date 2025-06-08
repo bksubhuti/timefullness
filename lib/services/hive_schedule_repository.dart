@@ -10,6 +10,7 @@ class HiveScheduleRepository implements ScheduleRepository {
   HiveScheduleRepository(this._box);
 
   static const _activeKey = 'activeSchedule';
+  Box get _metaBox => Hive.box('schedule_meta');
 
   @override
   Future<List<String>> listScheduleIds() async {
@@ -49,5 +50,31 @@ class HiveScheduleRepository implements ScheduleRepository {
   @override
   Future<void> setActiveScheduleId(String scheduleId) async {
     await _box.put(_activeKey, scheduleId);
+  }
+
+  Future<void> saveScheduleWithName(
+    String id,
+    String name,
+    List<ScheduleItem> items,
+  ) async {
+    await saveSchedule(id, items);
+    await _metaBox.put(id, name);
+  }
+
+  String getScheduleName(String id) {
+    return _metaBox.get(id, defaultValue: id);
+  }
+
+  Future<Map<String, String>> getAllScheduleNames() async {
+    return Map<String, String>.from(_metaBox.toMap());
+  }
+
+  Future<void> renameSchedule(String id, String newName) async {
+    await _metaBox.put(id, newName);
+  }
+
+  Future<void> deleteScheduleWithMeta(String id) async {
+    await deleteSchedule(id);
+    await _metaBox.delete(id);
   }
 }

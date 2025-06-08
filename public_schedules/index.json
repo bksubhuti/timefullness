@@ -1,38 +1,38 @@
 [
     {
         "id": "pa_auk",
-        "name": "Pa-Auk Schedule",
+        "name": "Pa-Auk",
         "description": "Standard monastic meditation schedule followed at Pa-Auk Forest Monastery.",
         "file": "pa_auk.json"
     },
     {
         "id": "goenka",
-        "name": "Goenka Retreat Schedule",
+        "name": "Goenka Retreat",
         "description": "10-day Vipassana retreat schedule as taught by S.N. Goenka.",
         "file": "goenka.json"
     },
     {
         "id": "day_time_retreat",
-        "name": "Daytime Retreat Schedule",
+        "name": "Daytime Retreat",
         "description": "A daytime-only schedule suitable for laypeople or visiting yogis.",
         "file": "day_time_retreat.json"
     },
     {
         "id": "mahasi",
-        "name": "Mahasi Meditation Schedule",
+        "name": "Mahasi",
         "description": "Traditional Mahasi Sayadaw retreat structure with emphasis on reporting.",
         "file": "mahasi.json"
     },
     {
         "id": "study_retreat",
-        "name": "Study Retreat Schedule",
+        "name": "Study Retreat",
         "description": "Dhamma study-focused schedule with built-in breaks for memorization and reading.",
         "file": "study_retreat.json"
     },
     {
-        "id": "study_retreat",
-        "name": "Study Retreat Schedule",
+        "id": "monastic_study_meditation",
+        "name": "Monastic Study Meditation ",
         "description": "Dhamma study and Meditation focused schedule",
-        "file": "meditation_study.json"
+        "file": "monastic_study_meditation.json"
     }
 ]

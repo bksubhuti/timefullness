@@ -36,6 +36,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   String _selectedScheduleId = '';
   late final HiveScheduleRepository scheduleRepo;
   bool _backgroundEnabled = Prefs.backgroundEnabled;
+  Map<String, String> _idToNameMap = {};
 
   @override
   void initState() {
@@ -49,9 +50,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Future<void> _loadScheduleData() async {
     final ids = await scheduleRepo.listScheduleIds();
     final active = await scheduleRepo.getActiveScheduleId();
+    final names = await scheduleRepo.getAllScheduleNames();
 
     setState(() {
       _scheduleIds = ids;
+      _idToNameMap = names;
       if (active != null && ids.contains(active)) {
         _selectedScheduleId = active;
       } else {
@@ -167,7 +170,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
             hint: Text(AppLocalizations.of(context)!.selectActiveSchedule),
             items:
                 _scheduleIds.map((id) {
-                  return DropdownMenuItem<String>(value: id, child: Text(id));
+                  return DropdownMenuItem<String>(
+                    value: id,
+                    child: Text(_idToNameMap[id] ?? id),
+                  );
                 }).toList(),
             onChanged: (value) async {
               if (value == null) return;
@@ -200,7 +206,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           SizedBox(height: 20),
           ElevatedButton(
             onPressed: _downloadSchedule,
-            child: Text("Download Public Schedule"),
+            child: Text(AppLocalizations.of(context)!.downloadPublicSchedule),
           ),
           const Divider(height: 40),
           SwitchListTile(
@@ -266,20 +272,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
     if (name == null || name.isEmpty) return;
 
-    final existing = await scheduleRepo.loadSchedule(name);
-    if (existing.isNotEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            AppLocalizations.of(context)!.scheduleAlreadyExists(name),
-          ),
-        ),
-      );
+    final id = UniqueKey().toString(); // or use Uuid
+    final existingIds = await scheduleRepo.listScheduleIds();
+    if (existingIds.contains(id)) {
       return;
-    }
+    } // safeguard
 
-    // Add default entry
-    await scheduleRepo.saveSchedule(name, [
+    await scheduleRepo.saveScheduleWithName(id, name, [
       ScheduleItem(
         id: UniqueKey().toString(),
         startTime: '6:00 AM',
@@ -288,17 +287,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ),
     ]);
 
-    // Set active and save preferences
-    await scheduleRepo.setActiveScheduleId(name);
-    Prefs.currentScheduleId = name;
-
+    await scheduleRepo.setActiveScheduleId(id);
+    Prefs.currentScheduleId = id;
     doScheduleChangedToggleAction();
 
-    // Reload from source to avoid duplicates
     await _loadScheduleData();
 
     setState(() {
-      _selectedScheduleId = name;
+      _selectedScheduleId = id;
     });
   }
 
@@ -313,7 +309,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
       return;
     }
 
-    final controller = TextEditingController(text: _selectedScheduleId);
+    final controller = TextEditingController(
+      text: _idToNameMap[_selectedScheduleId] ?? _selectedScheduleId,
+    );
 
     final newName = await showDialog<String>(
       context: context,
@@ -339,44 +337,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
     );
 
-    if (newName == null || newName.isEmpty || newName == _selectedScheduleId)
-      return;
+    if (newName == null || newName.isEmpty) return;
 
-    final existing = await scheduleRepo.loadSchedule(newName);
-    if (existing.isNotEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            AppLocalizations.of(context)!.newScheduleAlreadyExists(newName),
-          ),
-        ),
-      );
-      return;
-    }
-
-    final oldData = await scheduleRepo.loadSchedule(_selectedScheduleId);
-    await scheduleRepo.saveSchedule(newName, oldData);
-    await scheduleRepo.deleteSchedule(_selectedScheduleId);
-
-    final wasActive =
-        await scheduleRepo.getActiveScheduleId() == _selectedScheduleId;
-    if (wasActive) {
-      await scheduleRepo.setActiveScheduleId(newName);
-      Prefs.currentScheduleId = newName;
-    }
-
-    doScheduleChangedToggleAction();
-
+    await scheduleRepo.renameSchedule(_selectedScheduleId, newName);
     await _loadScheduleData();
 
-    setState(() {
-      _selectedScheduleId = newName;
-    });
+    setState(() {});
   }
 
   Future<void> _deleteSchedule() async {
     if (_selectedScheduleId.isEmpty) return;
-
     if (_selectedScheduleId == kDefaultScheduleName) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -392,9 +362,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
           (context) => AlertDialog(
             title: Text(AppLocalizations.of(context)!.deleteScheduleTitle),
             content: Text(
-              AppLocalizations.of(
-                context,
-              )!.deleteScheduleConfirmation(_selectedScheduleId),
+              AppLocalizations.of(context)!.deleteScheduleConfirmation(
+                _idToNameMap[_selectedScheduleId] ?? _selectedScheduleId,
+              ),
             ),
             actions: [
               TextButton(
@@ -411,7 +381,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
     if (confirm != true) return;
 
-    await scheduleRepo.deleteSchedule(_selectedScheduleId);
+    await scheduleRepo.deleteScheduleWithMeta(_selectedScheduleId);
 
     final remaining =
         _scheduleIds.where((id) => id != _selectedScheduleId).toList();
@@ -426,7 +396,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
 
     doScheduleChangedToggleAction();
-
     await _loadScheduleData();
 
     setState(() {
@@ -563,7 +532,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         context: context,
         builder: (context) {
           return SimpleDialog(
-            title: Text('Select a Schedule'),
+            title: Text(AppLocalizations.of(context)!.selectASchedule),
             children:
                 schedules
                     .map(
@@ -597,9 +566,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
       // Save schedule
       final box = Hive.box('schedules');
-      final repo = HiveScheduleRepository(box);
-      await repo.saveSchedule(selected.id, items);
-      await repo.setActiveScheduleId(selected.id);
+      await scheduleRepo.saveScheduleWithName(
+        selected.id,
+        selected.name,
+        items,
+      );
+      await scheduleRepo.setActiveScheduleId(selected.id);
+
       Prefs.currentScheduleId = selected.id;
 
       // Notify and refresh
