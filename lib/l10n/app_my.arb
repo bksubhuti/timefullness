@@ -73,5 +73,7 @@
   "notificationsTurnedOff": "အသိပေးချက်များကို ပိတ်ထားသည်။ ပြန်ဖွင့်ရန် သင်သည် ခေါင်းလောင်းအိုင်ကွန် (🔔) ကို တက်ဂယ်လုပ်ရမည်။",
   "rateThisApp": "ဒီအပ်ကိုအဆင့်သတ်မှတ်ပါ",
   "selectASchedule": "အချိန်ဇယားကို ရွေးပါ",
-  "downloadPublicSchedule": "အများပြည်သူအချိန်ဇယားကိုဒေါင်းလုတ်လုပ်ပါ"
+  "downloadPublicSchedule": "အများပြည်သူအချိန်ဇယားကိုဒေါင်းလုတ်လုပ်ပါ",
+  "shareThisApp": "ဤအက်ပ်ကိုမျှဝေပါ",
+  "shareAppMessage": "🧘 သင့်စိတ်နှင့်နေ့စဉ်အချိန်ဇယားကို စောင့်ကြည့်ရန် My Time Schedule အက်ပ်ကို အသုံးပြုပါ!\n\nဒေါင်းလုပ်လုပ်ရန်:\nAndroid အတွက်:\nhttps://play.google.com/store/apps/details?id=org.americanmonk.mytimeschedule\nApple အတွက်:\nhttps://apps.apple.com/us/developer/path-nirvana-foundation/id1434955292"
 }

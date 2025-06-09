@@ -30,9 +30,9 @@
         "file": "study_retreat.json"
     },
     {
-        "id": "monastic_study_meditation",
-        "name": "Monastic Study Meditation ",
+        "id": "monastic_mixed_meditation",
+        "name": "Monastic Mixed",
         "description": "Dhamma study and Meditation focused schedule",
-        "file": "monastic_study_meditation.json"
+        "file": "monastic_mixed.json"
     }
 ]

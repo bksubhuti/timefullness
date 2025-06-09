@@ -74,5 +74,7 @@
   "notificationsTurnedOff": "通知已关闭。您需要点击铃铛图标 (🔔) 重新开启它们。",
   "rateThisApp": "为此应用评分",
   "selectASchedule": "选择一个时间表",
-  "downloadPublicSchedule": "下载公开时间表"
+  "downloadPublicSchedule": "下载公开时间表",
+  "shareThisApp": "分享此应用",
+  "shareAppMessage": "🧘 尝试使用 My Time Schedule 应用来跟踪正念修行和日常安排！\n\n下载地址：\nAndroid版：\nhttps://play.google.com/store/apps/details?id=org.americanmonk.mytimeschedule\nApple版：\nhttps://apps.apple.com/us/developer/path-nirvana-foundation/id1434955292"
 }

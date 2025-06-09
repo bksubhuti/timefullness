@@ -74,5 +74,7 @@
   "notificationsTurnedOff": "ការជូនដំណឹងត្រូវបានបិទ។ សូមបើកវាវិញដោយចុចសញ្ញាកណ្ដឹង (🔔)",
   "rateThisApp": "ໃຫ້ຄະແນນແອັບນີ້",
   "selectASchedule": "ជ្រើសរើសកាលវិភាគ",
-  "downloadPublicSchedule": "ទាញយកកាលវិភាគសាធារណៈ"
+  "downloadPublicSchedule": "ទាញយកកាលវិភាគសាធារណៈ",
+  "shareThisApp": "ចែករំលែកកម្មវិធីនេះ",
+  "shareAppMessage": "🧘 សាកល្បងកម្មវិធី My Time Schedule ដើម្បីតាមដានការដឹកនាំផ្លូវចិត្ត និងកាលវិភាគប្រចាំថ្ងៃ!\n\nទាញយកនៅទីនេះ:\nសម្រាប់ Android:\nhttps://play.google.com/store/apps/details?id=org.americanmonk.mytimeschedule\nសម្រាប់ Apple:\nhttps://apps.apple.com/us/developer/path-nirvana-foundation/id1434955292"
 }

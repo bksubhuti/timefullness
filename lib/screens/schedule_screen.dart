@@ -12,6 +12,7 @@ import 'package:my_time_schedule/dialogs/help_dialog.dart';
 import 'package:my_time_schedule/screens/timer_screen.dart';
 import 'package:my_time_schedule/services/notification_service.dart';
 import 'package:my_time_schedule/services/utilities.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 import 'package:audioplayers/audioplayers.dart';
@@ -625,6 +626,19 @@ class _ScheduleScreenState extends State<ScheduleScreen>
                 if (await inAppReview.isAvailable()) {
                   inAppReview.openStoreListing();
                 }
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.share),
+              title: Text(AppLocalizations.of(context)!.shareThisApp),
+              onTap: () {
+                Navigator.pop(context); // close drawer
+
+                SharePlus.instance.share(
+                  ShareParams(
+                    text: AppLocalizations.of(context)!.shareAppMessage,
+                  ),
+                );
               },
             ),
           ],
