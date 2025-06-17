@@ -17,7 +17,14 @@ class SolidVisualTimer extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
-    final double progress = total == 0 ? 0 : remaining / total;
+    //final double progress = total == 0 ? 0 : remaining / total;
+    final bool isBypassing = Prefs.oneHourDisplay && remaining > 3600;
+
+    final double progress =
+        (Prefs.oneHourDisplay && remaining <= 3600)
+            ? remaining / 3600
+            : (total == 0 ? 0 : remaining / total);
+
     final minutes = remaining ~/ 60;
     final seconds = remaining % 60;
     String timeStr =
@@ -31,21 +38,34 @@ class SolidVisualTimer extends StatelessWidget {
       builder: (context, constraints) {
         final double maxSize = min(constraints.maxWidth, 300); // Cap size
         return Center(
-          child: SizedBox(
-            width: maxSize,
-            height: maxSize,
-            child: CustomPaint(
-              painter: SolidCirclePainter(progress),
-              child: Center(
-                child: Text(
-                  timeStr,
-                  style: const TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
+          child: Column(
+            children: [
+              SizedBox(
+                width: maxSize,
+                height: maxSize,
+                child: CustomPaint(
+                  painter: SolidCirclePainter(progress),
+                  child: Center(
+                    child: Text(
+                      timeStr,
+                      style: const TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
                 ),
               ),
-            ),
+              const SizedBox(height: 12),
+              if (isBypassing)
+                Padding(
+                  padding: EdgeInsets.only(top: 6),
+                  child: Text(
+                    l10n.timerBypassMessage,
+                    style: TextStyle(color: Colors.white70, fontSize: 14),
+                  ),
+                ),
+            ],
           ),
         );
       },

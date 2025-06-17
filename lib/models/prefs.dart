@@ -14,6 +14,7 @@ const String activeTimerNamePref = 'activeTimerName';
 const String allNotficationsEnabledPref = 'allNotificationsEnabled';
 const String activeTimerHashPref = 'activeTimerHash';
 const String timerBypassDndPref = 'bypassDnd';
+const String _oneHourDisplayKey = 'oneHourDisplay';
 
 const int defaultTimerColor = 0xFF2196F3; // Blue
 
@@ -101,4 +102,10 @@ class Prefs {
       instance.getBool(timerBypassDndPref) ?? false;
   static set timerBypassDnd(bool value) =>
       instance.setBool(timerBypassDndPref, value);
+
+  static bool get oneHourDisplay =>
+      instance.getBool(_oneHourDisplayKey) ?? false;
+
+  static set oneHourDisplay(bool value) =>
+      instance.setBool(_oneHourDisplayKey, value);
 }

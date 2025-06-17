@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
 import 'dart:math' as math;
 
+import 'package:my_time_schedule/models/prefs.dart';
+
 class DurationDial extends StatefulWidget {
   final int initialDuration;
   final ValueChanged<int> onChanged;
@@ -88,7 +90,7 @@ class DialPainter extends CustomPainter {
     // Draw selected segment
     final selectedPaint =
         Paint()
-          ..color = Colors.blue
+          ..color = Color(Prefs.timerColor)
           ..style = PaintingStyle.fill;
     canvas.drawArc(
       Rect.fromCircle(center: center, radius: radius),
@@ -101,7 +103,7 @@ class DialPainter extends CustomPainter {
     // Draw indicator line
     final linePaint =
         Paint()
-          ..color = Colors.blue
+          ..color = Color(Prefs.timerColor)
           ..style = PaintingStyle.stroke
           ..strokeWidth = 3;
     final lineEnd = Offset(
@@ -113,7 +115,7 @@ class DialPainter extends CustomPainter {
     // Draw indicator knob
     final knobPaint =
         Paint()
-          ..color = Colors.blue
+          ..color = Color(Prefs.timerColor)
           ..style = PaintingStyle.fill;
     canvas.drawCircle(lineEnd, 8, knobPaint);
 
