@@ -76,6 +76,9 @@
   "selectASchedule": "ເລືອກຕາຕະລາງ",
   "downloadPublicSchedule": "ດາວໂຫຼດຕາຕະລາງສາທາລະນະ",
   "shareThisApp": "ແບ່ງປັນແອັບນີ້",
-  "shareAppMessage": "🧘 ລອງໃຊ້ແອັບ My Time Schedule ເພື່ອຕິດຕາມຄວາມຮູ້ສຶກແລະຕາຕະລາງປະຈຳວັນ\n\nດາວໂຫຼດໄດ້ທີ່:\nສໍາລັບ Android:\nhttps://play.google.com/store/apps/details?id=org.americanmonk.mytimeschedule\nສໍາລັບ Apple:\nhttps://apps.apple.com/us/developer/path-nirvana-foundation/id1434955292"
+  "shareAppMessage": "🧘 ລອງໃຊ້ແອັບ My Time Schedule ເພື່ອຕິດຕາມຄວາມຮູ້ສຶກແລະຕາຕະລາງປະຈຳວັນ\n\nດາວໂຫຼດໄດ້ທີ່:\nສໍາລັບ Android:\nhttps://play.google.com/store/apps/details?id=org.americanmonk.mytimeschedule\nສໍາລັບ Apple:\nhttps://apps.apple.com/us/developer/path-nirvana-foundation/id1434955292",
+  "oneHourDisplayMode": "ໂຫມດສະແດງ 1 ຊົ່ວໂມງ",
+  "fullTimeDisplayMode": "ໂຫມດສະແດງເວລາເຕັມ",
+  "timerBypassMessage": "ເວລາເກີນ 1 ຊົ່ວໂມງ – ສະແດງເວລາເຕັມ"
 }
 

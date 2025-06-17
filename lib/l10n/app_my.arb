@@ -75,5 +75,8 @@
   "selectASchedule": "အချိန်ဇယားကို ရွေးပါ",
   "downloadPublicSchedule": "အများပြည်သူအချိန်ဇယားကိုဒေါင်းလုတ်လုပ်ပါ",
   "shareThisApp": "ဤအက်ပ်ကိုမျှဝေပါ",
-  "shareAppMessage": "🧘 သင့်စိတ်နှင့်နေ့စဉ်အချိန်ဇယားကို စောင့်ကြည့်ရန် My Time Schedule အက်ပ်ကို အသုံးပြုပါ!\n\nဒေါင်းလုပ်လုပ်ရန်:\nAndroid အတွက်:\nhttps://play.google.com/store/apps/details?id=org.americanmonk.mytimeschedule\nApple အတွက်:\nhttps://apps.apple.com/us/developer/path-nirvana-foundation/id1434955292"
+  "shareAppMessage": "🧘 သင့်စိတ်နှင့်နေ့စဉ်အချိန်ဇယားကို စောင့်ကြည့်ရန် My Time Schedule အက်ပ်ကို အသုံးပြုပါ!\n\nဒေါင်းလုပ်လုပ်ရန်:\nAndroid အတွက်:\nhttps://play.google.com/store/apps/details?id=org.americanmonk.mytimeschedule\nApple အတွက်:\nhttps://apps.apple.com/us/developer/path-nirvana-foundation/id1434955292",
+  "oneHourDisplayMode": "၁ နာရီပြသမှုရုပ်ပုံ",
+  "fullTimeDisplayMode": "အပြည့်အ زمانیပြသမှုရုပ်ပုံ",
+  "timerBypassMessage": "အချိန်တိုင်းကိရိယာ > ၁ နာရီ – အချိန်အပြည့်ပြသနေသည်"
 }

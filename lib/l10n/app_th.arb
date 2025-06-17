@@ -76,5 +76,8 @@
   "selectASchedule": "เลือกตารางเวลา",
   "downloadPublicSchedule": "ดาวน์โหลดตารางเวลาสาธารณะ",
   "shareThisApp": "แชร์แอปนี้",
-  "shareAppMessage": "🧘 ลองใช้แอป My Time Schedule เพื่อติดตามการฝึกสติและกิจวัตรประจำวันของคุณ\n\nดาวน์โหลดได้ที่:\nสำหรับ Android:\nhttps://play.google.com/store/apps/details?id=org.americanmonk.mytimeschedule\nสำหรับ Apple:\nhttps://apps.apple.com/us/developer/path-nirvana-foundation/id1434955292"
+  "shareAppMessage": "🧘 ลองใช้แอป My Time Schedule เพื่อติดตามการฝึกสติและกิจวัตรประจำวันของคุณ\n\nดาวน์โหลดได้ที่:\nสำหรับ Android:\nhttps://play.google.com/store/apps/details?id=org.americanmonk.mytimeschedule\nสำหรับ Apple:\nhttps://apps.apple.com/us/developer/path-nirvana-foundation/id1434955292",
+  "oneHourDisplayMode": "โหมดแสดงผล 1 ชั่วโมง",
+  "fullTimeDisplayMode": "โหมดแสดงผลเต็มเวลา",
+  "timerBypassMessage": "ตัวจับเวลา > 1 ชั่วโมง – แสดงระยะเวลาเต็ม"
 }

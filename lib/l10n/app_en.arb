@@ -75,5 +75,8 @@
   "selectASchedule": "Select a Schedule",
   "downloadPublicSchedule": "Download Public Schedule",
   "shareThisApp" : "Share This App",
-  "shareAppMessage": "🧘 Check out the My Time Schedule app for mindfulness and daily routine tracking!\n\nDownload it here:\nFor Android:\nhttps://play.google.com/store/apps/details?id=org.americanmonk.mytimeschedule\nFor Apple:https://apps.apple.com/us/developer/path-nirvana-foundation/id1434955292"
+  "shareAppMessage": "🧘 Check out the My Time Schedule app for mindfulness and daily routine tracking!\n\nDownload it here:\nFor Android:\nhttps://play.google.com/store/apps/details?id=org.americanmonk.mytimeschedule\nFor Apple:https://apps.apple.com/us/developer/path-nirvana-foundation/id1434955292",
+  "oneHourDisplayMode": "One Hour Display Mode",
+  "fullTimeDisplayMode": "Full Time Display Mode",
+  "timerBypassMessage": "Timer > 1 hour – showing full duration"
 }
