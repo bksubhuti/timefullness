@@ -67,3 +67,6 @@ app.*.map.json
 /linux/flutter/generated_*.*
 /macos/Flutter/Generated*.*
 /windows/flutter/generated_*.*
+
+# FVM Version Cache
+.fvm/
