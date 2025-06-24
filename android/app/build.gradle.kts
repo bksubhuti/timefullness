@@ -18,7 +18,7 @@ plugins {
 android {
     namespace = "org.americanmonk.mytimeschedule"
     compileSdk = 35
-    ndkVersion = "29.0.13113456" // Revert to NDK 29 since it worked
+    ndkVersion = "29.0.13599879" // Revert to NDK 29 since it worked
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11

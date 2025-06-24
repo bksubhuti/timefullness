@@ -562,6 +562,7 @@ class _ScheduleScreenState extends State<ScheduleScreen>
     return Scaffold(
       drawer: Drawer(
         child: ListView(
+          physics: BouncingScrollPhysics(),
           padding: EdgeInsets.zero,
           children: [
             DrawerHeader(

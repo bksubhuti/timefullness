@@ -79,5 +79,6 @@
   "shareAppMessage": "🧘 Hãy thử ứng dụng My Time Schedule để theo dõi chánh niệm và thói quen hàng ngày của bạn!\n\nTải xuống tại đây:\nDành cho Android:\nhttps://play.google.com/store/apps/details?id=org.americanmonk.mytimeschedule\nDành cho Apple:\nhttps://apps.apple.com/us/developer/path-nirvana-foundation/id1434955292",
   "oneHourDisplayMode": "Chế độ hiển thị 1 giờ",
   "fullTimeDisplayMode": "Chế độ hiển thị toàn thời gian",
-  "timerBypassMessage": "Hẹn giờ > 1 giờ – đang hiển thị toàn bộ thời gian"
+  "timerBypassMessage": "Hẹn giờ > 1 giờ – đang hiển thị toàn bộ thời gian",
+  "darkMode": "Chế độ tối"
 }

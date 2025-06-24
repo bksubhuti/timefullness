@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:my_time_schedule/models/prefs.dart';
+import 'package:my_time_schedule/providers/theme_provider.dart';
 import 'package:my_time_schedule/services/example_includes.dart';
 import 'package:my_time_schedule/services/notification_service.dart';
 import 'screens/schedule_screen.dart';
@@ -127,6 +128,7 @@ Future<void> main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => LocaleProvider()),
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
         // Add more providers here as needed
       ],
       child: const MyTimeScheduleApp(),
@@ -140,10 +142,14 @@ class MyTimeScheduleApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final localeProvider = Provider.of<LocaleProvider>(context);
+    final themeProvider = Provider.of<ThemeProvider>(context);
     return MaterialApp(
       title: 'My Time Schedule',
       home: const ScheduleScreen(),
       locale: localeProvider.locale,
+      theme: ThemeData.light(),
+      darkTheme: ThemeData.dark(),
+      themeMode: themeProvider.currentTheme,
       debugShowCheckedModeBanner: false,
       localizationsDelegates: const [
         AppLocalizations.delegate,

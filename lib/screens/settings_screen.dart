@@ -8,6 +8,7 @@ import 'package:my_time_schedule/constants.dart';
 import 'package:my_time_schedule/models/public_schedule_info.dart';
 import 'package:my_time_schedule/models/schedule_item.dart';
 import 'package:my_time_schedule/plugin.dart';
+import 'package:my_time_schedule/providers/theme_provider.dart';
 import 'package:my_time_schedule/services/notification_service.dart';
 import '../models/prefs.dart';
 import '../services/hive_schedule_repository.dart';
@@ -95,6 +96,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ],
           ),
           const SizedBox(height: 10),
+          SwitchListTile(
+            title: Text(AppLocalizations.of(context)!.darkMode),
+            value: Prefs.darkThemeOn,
+            onChanged: (val) {
+              Provider.of<ThemeProvider>(
+                context,
+                listen: false,
+              ).toggleTheme(val);
+              setState(() {}); // refresh the UI
+            },
+          ),
+
           Consumer<LocaleProvider>(
             builder: (context, localeProvider, _) {
               final currentLocale = localeProvider.locale?.languageCode ?? 'en';

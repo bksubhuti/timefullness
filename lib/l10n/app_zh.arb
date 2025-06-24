@@ -79,5 +79,6 @@
   "shareAppMessage": "🧘 尝试使用 My Time Schedule 应用来跟踪正念修行和日常安排！\n\n下载地址：\nAndroid版：\nhttps://play.google.com/store/apps/details?id=org.americanmonk.mytimeschedule\nApple版：\nhttps://apps.apple.com/us/developer/path-nirvana-foundation/id1434955292",
   "oneHourDisplayMode": "一小时显示模式",
   "fullTimeDisplayMode": "完整时间显示模式",
-  "timerBypassMessage": "计时器超过1小时 – 显示完整时长"
+  "timerBypassMessage": "计时器超过1小时 – 显示完整时长",
+  "darkMode": "深色模式"
 }
