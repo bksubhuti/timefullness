@@ -14,11 +14,12 @@ class SolidVisualTimer extends StatelessWidget {
   });
 
   @override
+  @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
-    //final double progress = total == 0 ? 0 : remaining / total;
     final bool isBypassing = Prefs.oneHourDisplay && remaining > 3600;
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
 
     final double progress =
         (Prefs.oneHourDisplay && remaining <= 3600)
@@ -34,9 +35,11 @@ class SolidVisualTimer extends StatelessWidget {
 
     if (remaining == 0) timeStr = l10n.finished;
 
+    final textColor = isDark ? Colors.white : Colors.black;
+
     return LayoutBuilder(
       builder: (context, constraints) {
-        final double maxSize = min(constraints.maxWidth, 300); // Cap size
+        final double maxSize = min(constraints.maxWidth, 300);
         return Center(
           child: Column(
             children: [
@@ -44,13 +47,14 @@ class SolidVisualTimer extends StatelessWidget {
                 width: maxSize,
                 height: maxSize,
                 child: CustomPaint(
-                  painter: SolidCirclePainter(progress),
+                  painter: SolidCirclePainter(progress, isDark),
                   child: Center(
                     child: Text(
                       timeStr,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.bold,
+                        color: textColor,
                       ),
                     ),
                   ),
@@ -59,10 +63,13 @@ class SolidVisualTimer extends StatelessWidget {
               const SizedBox(height: 12),
               if (isBypassing)
                 Padding(
-                  padding: EdgeInsets.only(top: 6),
+                  padding: const EdgeInsets.only(top: 6),
                   child: Text(
                     l10n.timerBypassMessage,
-                    style: TextStyle(color: Colors.white70, fontSize: 14),
+                    style: TextStyle(
+                      color: isDark ? Colors.white70 : Colors.black54,
+                      fontSize: 14,
+                    ),
                   ),
                 ),
             ],
@@ -75,14 +82,15 @@ class SolidVisualTimer extends StatelessWidget {
 
 class SolidCirclePainter extends CustomPainter {
   final double progress;
+  final bool isDark;
 
-  SolidCirclePainter(this.progress);
+  SolidCirclePainter(this.progress, this.isDark);
 
   @override
   void paint(Canvas canvas, Size size) {
     final paint =
         Paint()
-          ..color = Colors.grey.shade300
+          ..color = isDark ? Colors.grey.shade800 : Colors.grey.shade300
           ..style = PaintingStyle.fill;
 
     final progressPaint =
@@ -107,5 +115,5 @@ class SolidCirclePainter extends CustomPainter {
 
   @override
   bool shouldRepaint(SolidCirclePainter oldDelegate) =>
-      oldDelegate.progress != progress;
+      oldDelegate.progress != progress || oldDelegate.isDark != isDark;
 }

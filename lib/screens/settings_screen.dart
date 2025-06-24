@@ -10,6 +10,7 @@ import 'package:my_time_schedule/models/schedule_item.dart';
 import 'package:my_time_schedule/plugin.dart';
 import 'package:my_time_schedule/providers/theme_provider.dart';
 import 'package:my_time_schedule/services/notification_service.dart';
+import 'package:my_time_schedule/services/utilities.dart';
 import '../models/prefs.dart';
 import '../services/hive_schedule_repository.dart';
 import 'package:hive/hive.dart';
@@ -90,7 +91,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           const Divider(height: 40),
           Row(
             children: [
-              Icon(Icons.language, color: Color(Prefs.timerColor)),
+              Icon(Icons.language, color: getAdjustedColor(context)),
               SizedBox(width: 8),
               Text(l10n.language, style: TextStyle(fontSize: 18)),
             ],

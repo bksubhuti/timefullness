@@ -743,7 +743,7 @@ class _ScheduleScreenState extends State<ScheduleScreen>
           _allNotificationsEnabled
               ? Icons.notifications_active
               : Icons.notifications_off,
-          color: _allNotificationsEnabled ? Color(Prefs.timerColor) : null,
+          color: _allNotificationsEnabled ? getAdjustedColor(context) : null,
         ),
         onPressed: () async {
           final shouldProceed = await showDialog<bool>(

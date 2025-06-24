@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_time_schedule/models/prefs.dart';
+import 'package:my_time_schedule/services/utilities.dart';
 import '../models/schedule_item.dart';
 
 class ScheduleTile extends StatelessWidget {
@@ -87,14 +88,14 @@ class ScheduleTile extends StatelessWidget {
                             '${item.startTime} – ${item.endTime}',
                             style: TextStyle(
                               fontSize: 14,
-                              color: Color(Prefs.timerColor),
+                              color: getAdjustedColor(context),
                             ),
                           ),
                           IconButton(
                             icon: Icon(
                               Icons.edit,
                               size: 20,
-                              color: Color(Prefs.timerColor),
+                              color: getAdjustedColor(context),
                             ),
                             onPressed: onEdit,
                             tooltip: 'Start Timer',
@@ -116,7 +117,11 @@ class ScheduleTile extends StatelessWidget {
             ),
 
             IconButton(
-              icon: Icon(Icons.timer, size: 20, color: Color(Prefs.timerColor)),
+              icon: Icon(
+                Icons.timer,
+                size: 20,
+                color: getAdjustedColor(context),
+              ),
               onPressed: onTap,
               tooltip: 'Launch Timer',
             ),
@@ -124,7 +129,7 @@ class ScheduleTile extends StatelessWidget {
               icon: Icon(
                 Icons.delete,
                 size: 20,
-                color: Color(Prefs.timerColor),
+                color: getAdjustedColor(context),
               ),
               tooltip: 'Delete',
               onPressed: () async {
